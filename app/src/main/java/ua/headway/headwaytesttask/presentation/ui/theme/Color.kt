@@ -1,4 +1,4 @@
-package ua.headway.headwaytesttask.ui.theme
+package ua.headway.headwaytesttask.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

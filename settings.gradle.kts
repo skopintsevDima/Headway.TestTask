@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Headway TestTask"
 include(":app")
+include(":book-summary")
