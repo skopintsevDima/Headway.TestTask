@@ -16,11 +16,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ua.headway.booksummary.presentation.ui.screen.booksummary.ListenBookSummaryScreen
+import dagger.hilt.android.AndroidEntryPoint
+import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryScreen
 import ua.headway.headwaytesttask.presentation.resources.Constants.NavRoutes.ROUTE_ID_BOOK_SUMMARY_SCREEN
 import ua.headway.headwaytesttask.presentation.ui.theme.HeadwayTestTaskTheme
 
 // TODO: Follow best practices in navigation
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +49,7 @@ fun MainNavHost(
         modifier = Modifier.padding(padding)
     ) {
         composable(ROUTE_ID_BOOK_SUMMARY_SCREEN) {
-            ListenBookSummaryScreen()
+            BookSummaryScreen()
         }
     }
 }
