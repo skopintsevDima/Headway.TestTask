@@ -231,8 +231,8 @@ class BookSummaryViewModel @Inject constructor(
                 isPlayerReady = result.isPlayerReady,
                 isAudioPlaying = result.isAudioPlaying,
                 currentPartIndex = result.newAudioIndex,
-                currentAudioPositionMs = newAudioPositionMs,
-                currentAudioDurationMs = result.newAudioDurationMs
+                currentAudioPositionMs = newAudioPositionMs.positive,
+                currentAudioDurationMs = result.newAudioDurationMs.positive
             )
         } ?: previousState
     }
@@ -293,4 +293,7 @@ class BookSummaryViewModel @Inject constructor(
         clearPlayer()
         super.onCleared()
     }
+
+    private val Long.positive: Long
+        get() = this.coerceAtLeast (0)
 }
