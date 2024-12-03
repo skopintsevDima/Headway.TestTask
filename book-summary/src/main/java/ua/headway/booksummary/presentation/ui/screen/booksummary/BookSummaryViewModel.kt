@@ -269,7 +269,7 @@ class BookSummaryViewModel @Inject constructor(
                         text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
                     ),
                 ),
-                bookCoverUrl = "https://picsum.photos/1080/1920",
+                bookCoverUrl = "https://picsum.photos/id/24/1080/1920",
             )
         )
         return uiResult
