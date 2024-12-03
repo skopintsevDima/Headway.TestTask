@@ -1,5 +1,7 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
+import android.content.ComponentName
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,16 +34,19 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -52,8 +57,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import coil.compose.rememberAsyncImagePainter
+import com.google.common.util.concurrent.MoreExecutors
 import ua.headway.booksummary.R
+import ua.headway.booksummary.presentation.audio.AudioPlaybackService
+import ua.headway.booksummary.presentation.ui.composable.RequestPermission
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
@@ -63,17 +73,45 @@ import ua.headway.booksummary.presentation.ui.resources.LocalResources
 // TODO: Remove MaterialTheme import ---> Apply theme from app module
 @Composable
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
+    InitWithPermissions(viewModel)
+
     val uiState = viewModel.uiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.handleIntent(UiIntent.FetchBookSummary)
-    }
-
     when (val stateValue = uiState.value) {
+        UiState.Idle -> IdleScreen()
         UiState.Loading -> LoadingScreen()
         is UiState.Error -> ErrorScreen(stateValue)
         is UiState.Data -> DataScreen(stateValue, viewModel)
     }
+
+    DisposableEffect(Unit) {
+        // TODO: Check player being disposed (same as Service destroyed)
+        onDispose { viewModel.handleIntent(UiIntent.ClearPlayer) }
+    }
+}
+
+@Composable
+fun InitWithPermissions(viewModel: BookSummaryViewModel) {
+    // TODO: Check if it works correctly
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+            RequestPermission(android.Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) {
+                viewModel.handleIntent(UiIntent.FetchBookSummary)
+            }
+        }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> {
+            RequestPermission(android.Manifest.permission.FOREGROUND_SERVICE) {
+                viewModel.handleIntent(UiIntent.FetchBookSummary)
+            }
+        }
+        else -> {
+            viewModel.handleIntent(UiIntent.FetchBookSummary)
+        }
+    }
+}
+
+@Composable
+private fun IdleScreen() {
+    // TODO: Handle idle state
 }
 
 @Composable
@@ -115,11 +153,28 @@ private fun ErrorScreen(error: UiState.Error) {
 
 @Composable
 private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
-    val onSetAudioPosition = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.SetAudioPosition(position)) } }
+    val context = LocalContext.current
+    val sessionToken = remember {
+        SessionToken(context, ComponentName(context, AudioPlaybackService::class.java))
+    }
+    LaunchedEffect(sessionToken) {
+        val mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        mediaControllerFuture.addListener(
+            {
+                mediaControllerFuture.get()?.let {
+                    viewModel.handleIntent(UiIntent.InitPlayer(it))
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudioSpeed) } }
-    val onTogglePlay = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudio) } }
-    val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ChangeAudioPosition(REWIND_OFFSET_MILLIS)) } }
-    val onFastForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.ChangeAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
+    val onToggleAudio = remember(viewModel) { { play: Boolean -> viewModel.handleIntent(UiIntent.ToggleAudio(play)) } }
+    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.handleIntent(UiIntent.StartPlaybackPositionChange) } }
+    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
+    val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
+    val onFastForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
     val onSkipBackward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoPreviousPart) } }
     val onSkipForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoNextPart) } }
     val onAudioModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
@@ -142,9 +197,10 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         PlaybackProgressBar(
-            data.currentAudioPositionMs,
-            data.currentSummaryPart.audioDurationMs,
-            onSetAudioPosition
+            playbackTimeMs = data.currentAudioPositionMs.toFloat(),
+            totalTimeMs = data.currentAudioDurationMs.toFloat(),
+            onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
+            onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -153,7 +209,7 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
 
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
-            onTogglePlay = onTogglePlay,
+            onToggleAudio = { onToggleAudio(!data.isAudioPlaying) },
             onRewind = onRewind,
             onFastForward = onFastForward,
             onSkipBackward = onSkipBackward,
@@ -215,7 +271,8 @@ private fun PartDescription(currentPartDescription: String) {
 private fun PlaybackProgressBar(
     playbackTimeMs: Float,
     totalTimeMs: Float,
-    onPlaybackTimeChange: (Float) -> Unit
+    onPlaybackTimeChangeStarted: () -> Unit,
+    onPlaybackTimeChangeFinished: (Float) -> Unit
 ) {
     val formattedPlaybackTime by remember(playbackTimeMs) {
         derivedStateOf { formatTime(playbackTimeMs) }
@@ -223,6 +280,7 @@ private fun PlaybackProgressBar(
     val formattedTotalTime by remember(totalTimeMs) {
         derivedStateOf { formatTime(totalTimeMs) }
     }
+    val sliderValue = remember(playbackTimeMs) { mutableFloatStateOf(playbackTimeMs) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -237,8 +295,15 @@ private fun PlaybackProgressBar(
             )
         )
         Slider(
-            value = playbackTimeMs,
-            onValueChange = onPlaybackTimeChange,
+            value = sliderValue.floatValue,
+            onValueChange = {
+                onPlaybackTimeChangeStarted()
+                sliderValue.floatValue = it
+            },
+            onValueChangeFinished = {
+                val newPlaybackTimeMs = sliderValue.floatValue
+                onPlaybackTimeChangeFinished(newPlaybackTimeMs)
+            },
             valueRange = 0f..totalTimeMs,
             modifier = Modifier
                 .weight(1f)
@@ -289,7 +354,7 @@ private fun PlaybackSpeedToggle(
 @Composable
 private fun PlaybackControls(
     isAudioPlaying: Boolean,
-    onTogglePlay: () -> Unit,
+    onToggleAudio: () -> Unit,
     onRewind: () -> Unit,
     onFastForward: () -> Unit,
     onSkipBackward: () -> Unit,
@@ -318,7 +383,7 @@ private fun PlaybackControls(
             )
         }
 
-        IconButton(onClick = onTogglePlay) {
+        IconButton(onClick = onToggleAudio) {
             Icon(
                 modifier = Modifier.size(64.dp),
                 painter = painterResource(id = LocalResources.Icons.Pause.takeIf {

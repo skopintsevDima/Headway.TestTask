@@ -7,7 +7,6 @@ data class BookSummary(
     data class SummaryPart(
         val description: String,
         val audioUrl: String,
-        val audioDurationMs: Float,
         val text: String
     )
 }
