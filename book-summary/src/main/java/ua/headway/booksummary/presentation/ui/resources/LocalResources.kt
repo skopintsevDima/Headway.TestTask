@@ -25,6 +25,7 @@ object LocalResources {
         val Black = Color.Black
         val White = Color.White
         val Gray = Color.Gray
+        val DarkGray = Color.DarkGray
         val LightGray = Color (0xFFF2EBE8)
         val MilkWhite = Color(0xFFF8F5F1)
         val Blue = Color (0xFF0066FF)

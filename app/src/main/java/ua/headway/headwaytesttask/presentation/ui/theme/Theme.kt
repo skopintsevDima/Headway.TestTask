@@ -5,17 +5,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
 private val DarkColorPalette = darkColors(
-    primary = Purple80,
-    primaryVariant = PurpleGrey80,
-    secondary = Pink80
+    primary = LocalResources.Colors.Blue,
+    secondary = LocalResources.Colors.White,
+    surface = LocalResources.Colors.MilkWhite,
+    onSurface = LocalResources.Colors.Black,
+    background = LocalResources.Colors.DarkGray,
+    onBackground = LocalResources.Colors.MilkWhite,
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple40,
-    primaryVariant = PurpleGrey40,
-    secondary = Pink40
+    primary = LocalResources.Colors.Blue,
+    secondary = LocalResources.Colors.Black,
+    surface = LocalResources.Colors.LightGray,
+    onSurface = LocalResources.Colors.Black,
+    background = LocalResources.Colors.MilkWhite,
+    onBackground = LocalResources.Colors.Gray,
 )
 
 @Composable

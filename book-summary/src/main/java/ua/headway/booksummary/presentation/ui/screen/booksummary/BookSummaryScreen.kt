@@ -49,7 +49,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -195,7 +194,7 @@ fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = LocalResources.Colors.MilkWhite)
+            .background(color = MaterialTheme.colors.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -252,7 +251,7 @@ fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = LocalResources.Colors.MilkWhite)
+            .background(color = MaterialTheme.colors.background)
             .padding(16.dp)
     ) {
         TopBookCover(
@@ -328,7 +327,7 @@ private fun PartNumberTitle(partNumber: Int, partsTotal: Int) {
     Text(
         text = stringResource(R.string.key_point_title, partNumber, partsTotal),
         style = MaterialTheme.typography.body1.copy(
-            color = LocalResources.Colors.Gray,
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Medium,
             letterSpacing = 1.5.sp
         )
@@ -342,7 +341,7 @@ private fun PartDescription(currentPartDescription: String) {
         text = currentPartDescription,
         style = MaterialTheme.typography.body1.copy(
             fontWeight = FontWeight.Normal,
-            color = LocalResources.Colors.Black
+            color = MaterialTheme.colors.secondary
         ),
         textAlign = TextAlign.Center
     )
@@ -370,7 +369,7 @@ private fun PlaybackProgressBar(
         Text(
             text = formattedPlaybackTime,
             style = MaterialTheme.typography.caption.copy(
-                color = LocalResources.Colors.Gray,
+                color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp
             )
@@ -398,7 +397,7 @@ private fun PlaybackProgressBar(
         Text(
             text = formattedTotalTime,
             style = MaterialTheme.typography.caption.copy(
-                color = LocalResources.Colors.Gray,
+                color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Light,
                 fontSize = 14.sp
             )
@@ -413,7 +412,7 @@ private fun PlaybackSpeedToggle(
 ) {
     Button(
         onClick = onSpeedToggle,
-        colors = ButtonDefaults.buttonColors(backgroundColor = LocalResources.Colors.LightGray),
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
         shape = RoundedCornerShape(corner = CornerSize(8.dp)),
         contentPadding = PaddingValues(horizontal = 10.dp),
         modifier = Modifier
@@ -424,7 +423,7 @@ private fun PlaybackSpeedToggle(
         Text(
             text = stringResource(R.string.speed, playbackSpeed),
             style = MaterialTheme.typography.button.copy(
-                color = LocalResources.Colors.Black,
+                color = MaterialTheme.colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp
             )
@@ -449,47 +448,47 @@ private fun PlaybackControls(
         IconButton(onClick = onSkipBackward) {
             Icon(
                 modifier = Modifier.size(48.dp),
-                painter = painterResource(id = LocalResources.Icons.SkipBack),
+                imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                 contentDescription = "Skip Back",
-                tint = LocalResources.Colors.Black
+                tint = MaterialTheme.colors.secondary
             )
         }
 
         IconButton(onClick = onRewind) {
             Icon(
                 modifier = Modifier.size(48.dp),
-                painter = painterResource(id = LocalResources.Icons.Rewind5),
+                imageVector = ImageVector.vectorResource(LocalResources.Icons.Rewind5),
                 contentDescription = "Rewind 5 seconds",
-                tint = LocalResources.Colors.Black
+                tint = MaterialTheme.colors.secondary
             )
         }
 
         IconButton(onClick = onToggleAudio) {
             Icon(
                 modifier = Modifier.size(64.dp),
-                painter = painterResource(id = LocalResources.Icons.Pause.takeIf {
+                imageVector = ImageVector.vectorResource(LocalResources.Icons.Pause.takeIf {
                     isAudioPlaying
                 } ?: LocalResources.Icons.Play),
                 contentDescription = "Play/Pause",
-                tint = LocalResources.Colors.Black
+                tint = MaterialTheme.colors.secondary
             )
         }
 
         IconButton(onClick = onFastForward) {
             Icon(
                 modifier = Modifier.size(48.dp),
-                painter = painterResource(id = LocalResources.Icons.Forward10),
+                imageVector = ImageVector.vectorResource(LocalResources.Icons.Forward10),
                 contentDescription = "Fast Forward 10 Seconds",
-                tint = LocalResources.Colors.Black
+                tint = MaterialTheme.colors.secondary
             )
         }
 
         IconButton(onClick = onSkipForward) {
             Icon(
                 modifier = Modifier.size(48.dp),
-                painter = painterResource(id = LocalResources.Icons.SkipForward),
+                imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                 contentDescription = "Skip Forward",
-                tint = LocalResources.Colors.Black
+                tint = MaterialTheme.colors.secondary
             )
         }
     }
