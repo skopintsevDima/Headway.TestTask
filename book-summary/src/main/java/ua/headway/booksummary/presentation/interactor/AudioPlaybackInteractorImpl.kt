@@ -1,6 +1,5 @@
 package ua.headway.booksummary.presentation.interactor
 
-import android.provider.MediaStore.Audio.Media
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -29,6 +28,9 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
     private var syncPlaybackPositionJob: Job? = null
     private var coroutineScope: CoroutineScope? = null
+
+    override val isPlayerAvailable: Boolean
+        get() = audioPlayer != null
 
     override fun configurePlayer(
         mediaController: MediaController,

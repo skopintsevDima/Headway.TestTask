@@ -1,6 +1,7 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
 import android.content.ComponentName
+import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +36,6 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,37 +77,33 @@ import ua.headway.booksummary.presentation.ui.resources.LocalResources
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
     InitWithPermissions(viewModel)
 
-    val uiState = viewModel.uiState.collectAsState()
-    when (val stateValue = uiState.value) {
+    val uiState =  viewModel.uiState.collectAsState()
+    when (val data = uiState.value) {
         UiState.Idle -> IdleScreen()
         UiState.Loading -> LoadingScreen()
-        is UiState.Error -> ErrorScreen(stateValue)
-        is UiState.Data -> DataScreen(stateValue, viewModel)
-    }
-
-    DisposableEffect(Unit) {
-        // TODO: Check player being disposed (same as Service destroyed)
-        onDispose { viewModel.handleIntent(UiIntent.ClearPlayer) }
+        is UiState.Error -> ErrorScreen(data)
+        is UiState.Data -> DataScreen(data, viewModel)
     }
 }
 
 @Composable
 fun InitWithPermissions(viewModel: BookSummaryViewModel) {
     // TODO: Check if it works correctly
+    val onPermissionGranted = remember(viewModel) { { viewModel.handleIntent(UiIntent.FetchBookSummary) } }
     when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-            RequestPermission(android.Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) {
-                viewModel.handleIntent(UiIntent.FetchBookSummary)
-            }
+            RequestPermission(
+                android.Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK,
+                onPermissionGranted
+            )
         }
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> {
-            RequestPermission(android.Manifest.permission.FOREGROUND_SERVICE) {
-                viewModel.handleIntent(UiIntent.FetchBookSummary)
-            }
+            RequestPermission(
+                android.Manifest.permission.FOREGROUND_SERVICE,
+                onPermissionGranted
+            )
         }
-        else -> {
-            viewModel.handleIntent(UiIntent.FetchBookSummary)
-        }
+        else -> onPermissionGranted()
     }
 }
 
@@ -158,19 +156,33 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
         SessionToken(context, ComponentName(context, AudioPlaybackService::class.java))
     }
     LaunchedEffect(sessionToken) {
-        val mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-        mediaControllerFuture.addListener(
-            {
-                mediaControllerFuture.get()?.let {
-                    viewModel.handleIntent(UiIntent.InitPlayer(it))
-                }
-            },
-            MoreExecutors.directExecutor()
-        )
+        if (!viewModel.isPlayerAvailable) {
+            val mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+            mediaControllerFuture.addListener(
+                {
+                    mediaControllerFuture.get()?.let {
+                        viewModel.handleIntent(UiIntent.InitPlayer(it))
+                    }
+                },
+                MoreExecutors.directExecutor()
+            )
+        }
     }
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    if (isLandscape) {
+        DataLandscapeScreen(data, viewModel)
+    } else {
+        DataPortraitScreen(data, viewModel)
+    }
+}
+
+@Composable
+fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudioSpeed) } }
-    val onToggleAudio = remember(viewModel) { { play: Boolean -> viewModel.handleIntent(UiIntent.ToggleAudio(play)) } }
+    val onToggleAudio = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudio) } }
     val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.handleIntent(UiIntent.StartPlaybackPositionChange) } }
     val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
     val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
@@ -209,7 +221,7 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
 
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
-            onToggleAudio = { onToggleAudio(!data.isAudioPlaying) },
+            onToggleAudio = onToggleAudio,
             onRewind = onRewind,
             onFastForward = onFastForward,
             onSkipBackward = onSkipBackward,
@@ -225,10 +237,79 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
 }
 
 @Composable
-private fun TopBookCover(bookCoverUrl: String) {
+fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+    val onToggleAudioSpeed = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudioSpeed) } }
+    val onToggleAudio = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudio) } }
+    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.handleIntent(UiIntent.StartPlaybackPositionChange) } }
+    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
+    val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
+    val onFastForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
+    val onSkipBackward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoPreviousPart) } }
+    val onSkipForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoNextPart) } }
+    val onAudioModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
+    val onTextModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = LocalResources.Colors.MilkWhite)
+            .padding(16.dp)
+    ) {
+        TopBookCover(
+            bookCoverUrl = data.bookCoverUrl,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 16.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .padding(start = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            PartDescription(data.currentSummaryPart.description)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PlaybackProgressBar(
+                playbackTimeMs = data.currentAudioPositionMs.toFloat(),
+                totalTimeMs = data.currentAudioDurationMs.toFloat(),
+                onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
+                onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            PlaybackControls(
+                isAudioPlaying = data.isAudioPlaying,
+                onToggleAudio = onToggleAudio,
+                onRewind = onRewind,
+                onFastForward = onFastForward,
+                onSkipBackward = onSkipBackward,
+                onSkipForward = onSkipForward,
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            SummaryModeToggle(
+                isListeningModeEnabled = data.isListeningModeEnabled,
+                onAudioModeClick = onAudioModeClick,
+                onTextModeClick = onTextModeClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TopBookCover(bookCoverUrl: String, modifier: Modifier = Modifier) {
     // TODO: Add placeholder image for: loading, error
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(350.dp)
             .width(250.dp)
             .padding(top = 32.dp)

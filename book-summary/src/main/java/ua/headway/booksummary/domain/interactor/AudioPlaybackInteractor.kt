@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
 interface AudioPlaybackInteractor {
+    val isPlayerAvailable: Boolean
+
     fun configurePlayer(
         mediaController: MediaController,
         audioItems: List<MediaItem>

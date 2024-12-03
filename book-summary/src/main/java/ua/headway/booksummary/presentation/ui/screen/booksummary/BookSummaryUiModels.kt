@@ -39,7 +39,7 @@ sealed class UiState {
 sealed class UiIntent {
     data object FetchBookSummary: UiIntent()
     data class InitPlayer(val mediaController: MediaController) : UiIntent()
-    data class ToggleAudio(val play: Boolean): UiIntent()
+    data object ToggleAudio: UiIntent()
     data object StartPlaybackPositionChange: UiIntent()
     data class FinishPlaybackPositionChange(val newAudioPositionMs: Long): UiIntent()
     data class ShiftAudioPosition(val offsetMs: Long): UiIntent()
@@ -48,7 +48,6 @@ sealed class UiIntent {
     data object GoPreviousPart: UiIntent()
     data object ToggleSummaryMode: UiIntent()
     data class UpdatePlaybackState(val newPlaybackState: PlaybackState): UiIntent()
-    data object ClearPlayer: UiIntent()
 }
 
 sealed class UiResult {
@@ -66,7 +65,6 @@ sealed class UiResult {
             val newAudioPositionMs: Long,
             val newAudioDurationMs: Long
         ): Success()
-        data object PlayerCleared: Success()
     }
 
     data class Failure(val errorCode: Int, val errorMsg: String = ""): UiResult() {

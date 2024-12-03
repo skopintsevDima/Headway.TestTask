@@ -36,6 +36,9 @@ class BookSummaryViewModel @Inject constructor(
 
     private var isAudioPositionChangeInProgress: Boolean = false
 
+    val isPlayerAvailable: Boolean
+        get() = audioPlaybackInteractor.isPlayerAvailable
+
     init {
         viewModelScope.launch {
             playbackState = audioPlaybackInteractor.subscribeToUpdates(
@@ -51,8 +54,10 @@ class BookSummaryViewModel @Inject constructor(
         when (intent) {
             is UiIntent.FetchBookSummary -> {
                 viewModelScope.launch(Dispatchers.Default) {
-                    _uiState.value = reduce(_uiState.value, UiResult.Loading)
-                    _uiState.value = reduce(_uiState.value, fetchBookSummary())
+                    if (_uiState.value == UiState.Idle) {
+                        _uiState.value = reduce(_uiState.value, UiResult.Loading)
+                        _uiState.value = reduce(_uiState.value, fetchBookSummary())
+                    }
                 }
             }
 
@@ -87,7 +92,8 @@ class BookSummaryViewModel @Inject constructor(
             }
 
             is UiIntent.ToggleAudio -> {
-                audioPlaybackInteractor.togglePlayback(play = intent.play)
+                val currentState = _uiState.value.asData ?: return
+                audioPlaybackInteractor.togglePlayback(play = !currentState.isAudioPlaying)
             }
 
             UiIntent.StartPlaybackPositionChange -> {
@@ -180,11 +186,6 @@ class BookSummaryViewModel @Inject constructor(
                     }
                 }
             }
-
-            UiIntent.ClearPlayer -> {
-                clearPlayer()
-                _uiState.value = reduce(_uiState.value, UiResult.Success.PlayerCleared)
-            }
         }
     }
 
@@ -234,8 +235,6 @@ class BookSummaryViewModel @Inject constructor(
                 currentAudioDurationMs = result.newAudioDurationMs
             )
         } ?: previousState
-
-        UiResult.Success.PlayerCleared -> UiState.Idle
     }
 
     private suspend fun fetchBookSummary(): UiResult {
@@ -288,5 +287,10 @@ class BookSummaryViewModel @Inject constructor(
 
     private fun clearPlayer() {
         audioPlaybackInteractor.releasePlayer()
+    }
+
+    override fun onCleared() {
+        clearPlayer()
+        super.onCleared()
     }
 }
