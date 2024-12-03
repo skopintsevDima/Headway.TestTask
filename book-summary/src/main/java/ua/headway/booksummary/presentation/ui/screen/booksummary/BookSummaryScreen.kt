@@ -317,7 +317,7 @@ private fun TopBookCover(bookCoverUrl: String, modifier: Modifier = Modifier) {
             painter = rememberAsyncImagePainter(model = bookCoverUrl),
             contentDescription = "Book Cover",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Crop
         )
     }
 }
@@ -410,6 +410,16 @@ private fun PlaybackSpeedToggle(
     playbackSpeed: Float,
     onSpeedToggle: () -> Unit
 ) {
+    val playbackSpeedFormatted by remember(playbackSpeed) {
+        derivedStateOf {
+            when (playbackSpeed) {
+                1f -> "1"
+                1.5f -> "1.5"
+                2f -> "2"
+                else -> "1"
+            }
+        }
+    }
     Button(
         onClick = onSpeedToggle,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
@@ -421,12 +431,13 @@ private fun PlaybackSpeedToggle(
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp)
     ) {
         Text(
-            text = stringResource(R.string.speed, playbackSpeed),
+            text = stringResource(R.string.speed, playbackSpeedFormatted),
             style = MaterialTheme.typography.button.copy(
                 color = MaterialTheme.colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
-            )
+                fontSize = 15.sp,
+                letterSpacing = 0.5.sp
+            ),
         )
     }
 }
