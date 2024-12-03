@@ -62,9 +62,9 @@ sealed class UiResult {
         data class PlaybackStateUpdated(
             val isPlayerReady: Boolean,
             val isAudioPlaying: Boolean,
-            val currentAudioIndex: Int,
-            val currentAudioPositionMs: Long,
-            val currentAudioDurationMs: Long
+            val newAudioIndex: Int,
+            val newAudioPositionMs: Long,
+            val newAudioDurationMs: Long
         ): Success()
         data object PlayerCleared: Success()
     }

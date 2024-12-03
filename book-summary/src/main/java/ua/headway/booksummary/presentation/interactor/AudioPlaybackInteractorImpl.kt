@@ -93,9 +93,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                 while (isActive) {
                     delay(DELAY_PLAYER_POSITION_UPDATES_MILLIS)
                     withContext(Dispatchers.Main) {
-                        if (audioPlayer?.isPlaying == true) {
-                            syncPlayerPosition()
-                        }
+                        syncPlayerPosition()
                     }
                 }
             }

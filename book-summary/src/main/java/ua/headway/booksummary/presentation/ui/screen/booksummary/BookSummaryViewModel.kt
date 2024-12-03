@@ -28,7 +28,7 @@ class BookSummaryViewModel @Inject constructor(
 
     private lateinit var playbackState: StateFlow<PlaybackState>
 
-    private var wasAudioPlayingBeforePositionChange: Boolean = false
+    private var isAudioPositionChangeInProgress: Boolean = false
 
     init {
         viewModelScope.launch {
@@ -70,12 +70,7 @@ class BookSummaryViewModel @Inject constructor(
             }
 
             UiIntent.StartPlaybackPositionChange -> {
-                _uiState.value.asData?.let { currentState ->
-                    if (currentState.isAudioPlaying) {
-                        wasAudioPlayingBeforePositionChange = true
-                    }
-                }
-                audioPlaybackInteractor.togglePlayback(play = false)
+                isAudioPositionChangeInProgress = true
             }
 
             is UiIntent.FinishPlaybackPositionChange -> {
@@ -83,8 +78,7 @@ class BookSummaryViewModel @Inject constructor(
                 val newAudioPositionMs = intent.newAudioPositionMs
                     .coerceIn(0, currentState.currentAudioDurationMs)
                 audioPlaybackInteractor.seekTo(newAudioPositionMs)
-                audioPlaybackInteractor.togglePlayback(play = wasAudioPlayingBeforePositionChange)
-                wasAudioPlayingBeforePositionChange = false
+                isAudioPositionChangeInProgress = false
             }
 
             is UiIntent.ShiftAudioPosition -> {
@@ -136,9 +130,9 @@ class BookSummaryViewModel @Inject constructor(
                             UiResult.Success.PlaybackStateUpdated(
                                 isPlayerReady = false,
                                 isAudioPlaying = false,
-                                currentAudioIndex = currentState.currentPartIndex,
-                                currentAudioPositionMs = currentState.currentAudioPositionMs,
-                                currentAudioDurationMs = currentState.currentAudioDurationMs
+                                newAudioIndex = currentState.currentPartIndex,
+                                newAudioPositionMs = currentState.currentAudioPositionMs,
+                                newAudioDurationMs = currentState.currentAudioDurationMs
                             )
                         )
                     }
@@ -148,9 +142,9 @@ class BookSummaryViewModel @Inject constructor(
                             UiResult.Success.PlaybackStateUpdated(
                                 isPlayerReady = currentState.isPlayerReady,
                                 isAudioPlaying = newPlaybackState.isAudioPlaying,
-                                currentAudioIndex = newPlaybackState.currentAudioIndex,
-                                currentAudioPositionMs = newPlaybackState.currentAudioPositionMs,
-                                currentAudioDurationMs = newPlaybackState.currentAudioDurationMs
+                                newAudioIndex = newPlaybackState.currentAudioIndex,
+                                newAudioPositionMs = newPlaybackState.currentAudioPositionMs,
+                                newAudioDurationMs = newPlaybackState.currentAudioDurationMs
                             )
                         )
                     }
@@ -206,13 +200,19 @@ class BookSummaryViewModel @Inject constructor(
             isListeningModeEnabled = result.isListeningModeEnabled
         ) ?: previousState
 
-        is UiResult.Success.PlaybackStateUpdated -> previousState.asData?.copy(
-            isPlayerReady = result.isPlayerReady,
-            isAudioPlaying = result.isAudioPlaying,
-            currentPartIndex = result.currentAudioIndex,
-            currentAudioPositionMs = result.currentAudioPositionMs,
-            currentAudioDurationMs = result.currentAudioDurationMs
-        ) ?: previousState
+        is UiResult.Success.PlaybackStateUpdated -> previousState.asData?.let { data ->
+            val newAudioPositionMs = result.newAudioPositionMs.takeIf {
+                !isAudioPositionChangeInProgress
+            } ?: data.currentAudioPositionMs
+
+            data.copy(
+                isPlayerReady = result.isPlayerReady,
+                isAudioPlaying = result.isAudioPlaying,
+                currentPartIndex = result.newAudioIndex,
+                currentAudioPositionMs = newAudioPositionMs,
+                currentAudioDurationMs = result.newAudioDurationMs
+            )
+        } ?: previousState
 
         UiResult.Success.PlayerCleared -> UiState.Idle
     }
