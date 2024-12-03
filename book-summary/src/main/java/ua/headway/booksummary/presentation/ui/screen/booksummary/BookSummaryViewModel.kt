@@ -1,7 +1,10 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,13 +18,16 @@ import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.domain.model.BookSummary
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI
+import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
 import javax.inject.Inject
 
 // TODO: Handle all the possible errors in ViewModel via ErrorHandler (single source of error handling)
 //  --> Use tryHandleEvent and tryReduce ?
 @HiltViewModel
 class BookSummaryViewModel @Inject constructor(
-    private val audioPlaybackInteractor: AudioPlaybackInteractor
+    private val audioPlaybackInteractor: AudioPlaybackInteractor,
+    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle) // TODO: Fix concurrency
     val uiState: StateFlow<UiState> = _uiState
@@ -54,7 +60,22 @@ class BookSummaryViewModel @Inject constructor(
                 _uiState.value.asData?.let { data ->
                     initPlayer(
                         intent.mediaController,
-                        data.summaryParts.map { it.audioUrl }
+                        data.summaryParts.mapIndexed { index, summaryPart ->
+                            val metadata = MediaMetadata.Builder()
+                            .setTitle(resourceProvider.getString(
+                                LocalResources.Strings.KeyPointTitle,
+                                index + 1,
+                                data.partsTotal
+                            ))
+                            .setDescription(summaryPart.description)
+                            .setArtworkUri(Uri.parse(data.bookCoverUrl))
+                            .build()
+
+                            MediaItem.Builder()
+                                .setUri(summaryPart.audioUrl)
+                                .setMediaMetadata(metadata)
+                                .build()
+                        }
                     )
                     _uiState.value = reduce(_uiState.value, UiResult.Success.PlayerInitiated)
                     return
@@ -257,11 +278,11 @@ class BookSummaryViewModel @Inject constructor(
 
     private fun initPlayer(
         mediaController: MediaController,
-        audioLinks: List<String>
+        audioItems: List<MediaItem>
     ) {
         audioPlaybackInteractor.configurePlayer(
             mediaController,
-            audioLinks
+            audioItems
         )
     }
 

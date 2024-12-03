@@ -9,16 +9,16 @@ object LocalResources {
         val Pause = R.drawable.ic_pause
         val SkipBack = R.drawable.ic_skip_back
         val SkipForward = R.drawable.ic_skip_forward
-        val Replay5 = R.drawable.ic_replay_5
+        val Rewind5 = R.drawable.ic_rewind_5
         val Forward10 = R.drawable.ic_forward_10
         val Headset = R.drawable.ic_headset
         val List = R.drawable.ic_list
-        // TODO: (AFTER DYNAMIC IMAGE LOADING) Delete resource
-        val BookCover = R.drawable.book_cover
     }
 
+    // TODO: Заменить везде на это
     object Strings {
-
+        val NotificationChannelName = R.string.notification_channel_name
+        val KeyPointTitle = R.string.key_point_title
     }
 
     object Colors {

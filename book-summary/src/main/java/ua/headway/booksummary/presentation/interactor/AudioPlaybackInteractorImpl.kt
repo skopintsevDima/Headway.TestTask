@@ -1,5 +1,6 @@
 package ua.headway.booksummary.presentation.interactor
 
+import android.provider.MediaStore.Audio.Media
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -31,11 +32,11 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
     override fun configurePlayer(
         mediaController: MediaController,
-        audioLinks: List<String>
+        audioItems: List<MediaItem>
     ) {
         audioPlayer = mediaController.apply {
             addListener(audioPlayerListener)
-            setMediaItems(audioLinks.map { MediaItem.fromUri(it) })
+            setMediaItems(audioItems)
             prepare()
             startPositionSyncer()
         }

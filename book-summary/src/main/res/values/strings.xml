@@ -1,5 +1,6 @@
 <resources>
     <string name="oki_doki">Oki-doki</string>
     <string name="key_point_title">KEY POINT %1$s OF %2$s</string>
-    <string name="speed">"Speed x%1$s</string>
+    <string name="speed">Speed x%1$s</string>
+    <string name="notification_channel_name">Headway TestTask Audio Player></string>
 </resources>

@@ -377,7 +377,7 @@ private fun PlaybackControls(
         IconButton(onClick = onRewind) {
             Icon(
                 modifier = Modifier.size(48.dp),
-                painter = painterResource(id = LocalResources.Icons.Replay5),
+                painter = painterResource(id = LocalResources.Icons.Rewind5),
                 contentDescription = "Rewind 5 seconds",
                 tint = LocalResources.Colors.Black
             )

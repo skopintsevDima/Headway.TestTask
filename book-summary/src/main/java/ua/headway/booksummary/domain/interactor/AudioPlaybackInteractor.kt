@@ -1,5 +1,6 @@
 package ua.headway.booksummary.domain.interactor
 
+import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -8,7 +9,7 @@ import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 interface AudioPlaybackInteractor {
     fun configurePlayer(
         mediaController: MediaController,
-        audioLinks: List<String>
+        audioItems: List<MediaItem>
     )
     suspend fun subscribeToUpdates(coroutineScope: CoroutineScope): StateFlow<PlaybackState>
     fun togglePlayback(play: Boolean)
