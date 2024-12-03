@@ -9,8 +9,6 @@ object Constants {
     }
 
     object UI {
-        const val CROSSFADE_ENABLED = true
-
         object BookSummary {
             const val AUDIO_SPEED_LEVEL_DEFAULT = 1f
             const val REWIND_OFFSET_MILLIS = 5 * 1000L
