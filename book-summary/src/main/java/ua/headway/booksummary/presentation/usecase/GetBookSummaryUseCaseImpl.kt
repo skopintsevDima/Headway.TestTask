@@ -10,7 +10,7 @@ class GetBookSummaryUseCaseImpl(
     private val bookRepository: BookRepository
 ): GetBookSummaryUseCase {
     override suspend fun execute(bookId: Long): BookSummary {
-        delay(2000) // TODO: Replace with real data fetching (from API/DB)
+        delay(2000) // TODO: Implement real data fetching (from API/DB)
         return bookRepository.getBookSummaryById(bookId).first()
     }
 }

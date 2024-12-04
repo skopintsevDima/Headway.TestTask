@@ -8,7 +8,6 @@ plugins {
 
 android {
     namespace = "ua.headway.headwaytesttask"
-    // TODO: Move all the magic constants into common Constants file
     compileSdk = 35
 
     defaultConfig {
