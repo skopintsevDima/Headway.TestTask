@@ -26,6 +26,7 @@ object Constants {
             const val REWIND_OFFSET_MILLIS = 5 * 1000L
             const val FAST_FORWARD_OFFSET_MILLIS = 10 * 1000L
             const val DELAY_PLAYER_SYNC_MILLIS = 50L
+            const val PLAYER_CACHE_SIZE_MB = 50L * 1024 * 1024
 
             const val AUDIO_PLAYING_DEFAULT = false
             const val LISTENING_ENABLED_DEFAULT = true
@@ -34,6 +35,8 @@ object Constants {
             const val PLAYER_REPEAT_MODE = Player.REPEAT_MODE_OFF
 
             const val FORMAT_PLAYBACK_TIME = "%02d:%02d"
+
+            const val AUDIO_CACHE_DIR_NAME = "book_summary_audio_cache"
 
             const val ERROR_MSG_PLAYER_SEEK_FAILED = "Nice try 👏, but we can't seek to this position!"
             const val ERROR_MSG_PLAYER_TOGGLE_FAILED = "Oops, we can't toggle your audio 😔"
