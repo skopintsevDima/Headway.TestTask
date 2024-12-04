@@ -21,7 +21,6 @@ import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryScre
 import ua.headway.headwaytesttask.presentation.resources.Constants.NavRoutes.ROUTE_ID_BOOK_SUMMARY_SCREEN
 import ua.headway.headwaytesttask.presentation.ui.theme.HeadwayTestTaskTheme
 
-// TODO: Follow best practices in navigation
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +38,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainNavHost(
-    // TODO: How EXACTLY does it work?
     navController: NavHostController = rememberNavController(),
     padding: PaddingValues = PaddingValues(0.dp)
 ) {
