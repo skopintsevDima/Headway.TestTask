@@ -5,5 +5,7 @@
     <string name="notification_channel_name">Headway TestTask Audio Player></string>
     <string name="retry">Retry</string>
     <string name="idle_message">Let\'s listen to something beneficial…</string>
+
     <string name="unknown_error_message_to_user">We would recommend to restart the app 🫶</string>
+    <string name="permission_denied_error_message_to_user">Permission denied: we can\'t move forward 🥲</string>
 </resources>

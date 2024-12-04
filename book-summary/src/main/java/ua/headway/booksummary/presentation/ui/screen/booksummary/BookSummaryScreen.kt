@@ -75,7 +75,6 @@ import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.tool.formatTime
 
 // TODO: (EVERYWHERE) Remove all magic constants into Constants + texts to Strings
-// TODO: Remove MaterialTheme import ---> Apply theme from app module
 @Composable
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
     InitWithPermissions(viewModel)
@@ -144,6 +143,7 @@ private fun MessageScreen(message: String) {
     }
 }
 
+@Suppress("DEPRECATION")
 @Composable
 private fun LoadingScreen() {
     Column(

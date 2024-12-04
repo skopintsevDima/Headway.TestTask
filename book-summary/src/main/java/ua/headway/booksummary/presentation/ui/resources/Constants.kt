@@ -13,6 +13,7 @@ object Constants {
             const val ERROR_PLAYER_TOGGLE_FAILED = 106
             const val ERROR_PLAYER_SPEED_CHANGE_FAILED = 107
             const val ERROR_PLAYER_SKIP_FAILED = 108
+            const val ERROR_PLAYER_TEMPORARILY_UNAVAILABLE = 109
             const val ERROR_UNKNOWN = 100500
         }
     }

@@ -3,6 +3,7 @@ package ua.headway.booksummary.presentation.ui.screen.booksummary
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -27,6 +28,7 @@ import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.Boo
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SEEK_FAILED
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SKIP_FAILED
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SPEED_CHANGE_FAILED
+import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TOGGLE_FAILED
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_UNKNOWN
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI
@@ -39,8 +41,6 @@ import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvide
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState.Data.NonCriticalError
 import javax.inject.Inject
 
-// TODO: Handle all the possible errors in ViewModel via ErrorHandler (single source of error handling)
-//  --> Use tryHandleEvent and tryReduce ?
 @HiltViewModel
 class BookSummaryViewModel @Inject constructor(
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
@@ -285,6 +285,10 @@ class BookSummaryViewModel @Inject constructor(
                 ERROR_PLAYER_TOGGLE_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_TOGGLE_FAILED)
                 ERROR_PLAYER_SPEED_CHANGE_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_SPEED_CHANGE_FAILED)
                 ERROR_PLAYER_SKIP_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_SKIP_FAILED)
+                ERROR_PLAYER_TEMPORARILY_UNAVAILABLE -> {
+                    Log.e(UI.BookSummary.TAG, "ERROR_PLAYER_TEMPORARILY_UNAVAILABLE: previousState = $previousState")
+                    previousState
+                }
                 else -> result.toError()
             }
         }

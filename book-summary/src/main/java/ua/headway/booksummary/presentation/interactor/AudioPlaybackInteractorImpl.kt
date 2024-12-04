@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
+import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.DELAY_PLAYER_POSITION_UPDATES_MILLIS
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
@@ -104,8 +105,10 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     }
 
     private fun syncPlayerPosition() {
-        val newAudioPositionMs = audioPlayer?.currentPosition ?: 0
-        coroutineScope?.launch { _playbackPositionState.emit(newAudioPositionMs) }
+        audioPlayer?.run {
+            val newAudioPositionMs = this.currentPosition
+            coroutineScope?.launch { _playbackPositionState.emit(newAudioPositionMs) }
+        }
     }
 
     private fun stopPositionSyncer() {
@@ -148,18 +151,22 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            val currentPlaybackState = _playbackState.value.asReady
-            val newAudioDurationMs = audioPlayer?.duration ?: 0 // TODO: error if null
-            val newAudioIndex = audioPlayer?.currentMediaItemIndex ?: 0 // TODO: error if null
-            if (currentPlaybackState != null) {
-                val newPlaybackState = currentPlaybackState.copy(
-                    currentAudioIndex = newAudioIndex,
-                    currentAudioPositionMs = 0,
-                    currentAudioDurationMs = newAudioDurationMs
-                )
-                updatePlaybackState(newPlaybackState)
-            }
             super.onMediaItemTransition(mediaItem, reason)
+            audioPlayer?.run {
+                val currentPlaybackState = _playbackState.value.asReady
+                val newAudioDurationMs = this.duration
+                val newAudioIndex = this.currentMediaItemIndex
+                if (currentPlaybackState != null) {
+                    val newPlaybackState = currentPlaybackState.copy(
+                        currentAudioIndex = newAudioIndex,
+                        currentAudioPositionMs = 0,
+                        currentAudioDurationMs = newAudioDurationMs
+                    )
+                    updatePlaybackState(newPlaybackState)
+                }
+            } ?: updatePlaybackState(newPlaybackState = PlaybackState.Error(
+                ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
+            ))
         }
 
         override fun onPlayerError(error: PlaybackException) {
