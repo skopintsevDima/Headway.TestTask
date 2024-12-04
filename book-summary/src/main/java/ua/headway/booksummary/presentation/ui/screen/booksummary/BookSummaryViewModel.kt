@@ -305,6 +305,9 @@ class BookSummaryViewModel @Inject constructor(
             data.copy(
                 isPlayerReady = result.isPlayerReady,
                 isAudioPlaying = result.isAudioPlaying,
+                isListeningModeEnabled = true.takeIf { result.isAudioPlaying }
+                    ?: previousState.asData?.isListeningModeEnabled
+                    ?: false,
                 currentPartIndex = result.newAudioIndex,
                 currentAudioPositionMs = newAudioPositionMs.positive,
                 currentAudioDurationMs = result.newAudioDurationMs.positive
