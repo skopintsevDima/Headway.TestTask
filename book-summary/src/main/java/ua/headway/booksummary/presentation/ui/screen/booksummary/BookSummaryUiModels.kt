@@ -1,6 +1,6 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
-import androidx.media3.session.MediaController
+import android.content.Context
 import ua.headway.booksummary.domain.model.BookSummary
 import ua.headway.booksummary.domain.model.BookSummary.SummaryPart
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes
@@ -38,7 +38,7 @@ sealed class UiState {
 
 sealed class UiIntent {
     data object FetchBookSummary: UiIntent()
-    data class InitPlayer(val mediaController: MediaController) : UiIntent()
+    data class InitPlayer(val context: Context) : UiIntent()
     data object ToggleAudio: UiIntent()
     data object StartPlaybackPositionChange: UiIntent()
     data class FinishPlaybackPositionChange(val newAudioPositionMs: Long): UiIntent()

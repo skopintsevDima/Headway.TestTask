@@ -1,11 +1,14 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
+import android.content.ComponentName
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -16,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.domain.model.BookSummary
+import ua.headway.booksummary.presentation.audio.AudioPlaybackService
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
@@ -36,7 +40,7 @@ class BookSummaryViewModel @Inject constructor(
 
     private var isAudioPositionChangeInProgress: Boolean = false
 
-    val isPlayerAvailable: Boolean
+    private val isPlayerAvailable: Boolean
         get() = audioPlaybackInteractor.isPlayerAvailable
 
     init {
@@ -63,26 +67,25 @@ class BookSummaryViewModel @Inject constructor(
 
             is UiIntent.InitPlayer -> { // TODO: Cover all the possible failing scenarios in the same way
                 _uiState.value.asData?.let { data ->
-                    initPlayer(
-                        intent.mediaController,
-                        data.summaryParts.mapIndexed { index, summaryPart ->
-                            val metadata = MediaMetadata.Builder()
-                            .setTitle(resourceProvider.getString(
-                                LocalResources.Strings.KeyPointTitle,
-                                index + 1,
-                                data.partsTotal
-                            ))
-                            .setDescription(summaryPart.description)
-                            .setArtworkUri(Uri.parse(data.bookCoverUrl))
-                            .build()
-
-                            MediaItem.Builder()
-                                .setUri(summaryPart.audioUrl)
-                                .setMediaMetadata(metadata)
-                                .build()
-                        }
-                    )
-                    _uiState.value = reduce(_uiState.value, UiResult.Success.PlayerInitiated)
+                    if (!isPlayerAvailable) {
+                        val sessionToken = SessionToken(intent.context, ComponentName(
+                            intent.context,
+                            AudioPlaybackService::class.java
+                        ))
+                        val mediaControllerFuture = MediaController.Builder(
+                            intent.context,
+                            sessionToken
+                        ).buildAsync()
+                        mediaControllerFuture.addListener(
+                            {
+                                mediaControllerFuture.get()?.let { mediaController ->
+                                    setupPlayer(mediaController, getPlayerMediaItems(data))
+                                    _uiState.value = reduce(_uiState.value, UiResult.Success.PlayerInitiated)
+                                }
+                            },
+                            MoreExecutors.directExecutor()
+                        )
+                    }
                     return
                 }
                 _uiState.value = reduce(
@@ -189,6 +192,24 @@ class BookSummaryViewModel @Inject constructor(
         }
     }
 
+    private fun getPlayerMediaItems(data: UiState.Data): List<MediaItem> =
+        data.summaryParts.mapIndexed { index, summaryPart ->
+            val metadata = MediaMetadata.Builder()
+                .setTitle(resourceProvider.getString(
+                    LocalResources.Strings.KeyPointTitle,
+                    index + 1,
+                    data.partsTotal
+                ))
+                .setDescription(summaryPart.description)
+                .setArtworkUri(Uri.parse(data.bookCoverUrl))
+                .build()
+
+            MediaItem.Builder()
+                .setUri(summaryPart.audioUrl)
+                .setMediaMetadata(metadata)
+                .build()
+        }
+
     private fun reduce(previousState: UiState, result: UiResult): UiState = when (result) {
         UiResult.Loading -> UiState.Loading
 
@@ -275,7 +296,7 @@ class BookSummaryViewModel @Inject constructor(
         return uiResult
     }
 
-    private fun initPlayer(
+    private fun setupPlayer(
         mediaController: MediaController,
         audioItems: List<MediaItem>
     ) {

@@ -1,6 +1,5 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
-import android.content.ComponentName
 import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.Image
@@ -58,12 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import coil.compose.rememberAsyncImagePainter
-import com.google.common.util.concurrent.MoreExecutors
 import ua.headway.booksummary.R
-import ua.headway.booksummary.presentation.audio.AudioPlaybackService
 import ua.headway.booksummary.presentation.ui.composable.RequestPermission
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
@@ -150,22 +145,9 @@ private fun ErrorScreen(error: UiState.Error) {
 
 @Composable
 private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
-    val context = LocalContext.current
-    val sessionToken = remember {
-        SessionToken(context, ComponentName(context, AudioPlaybackService::class.java))
-    }
-    LaunchedEffect(sessionToken) {
-        if (!viewModel.isPlayerAvailable) {
-            val mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-            mediaControllerFuture.addListener(
-                {
-                    mediaControllerFuture.get()?.let {
-                        viewModel.handleIntent(UiIntent.InitPlayer(it))
-                    }
-                },
-                MoreExecutors.directExecutor()
-            )
-        }
+    val context = LocalContext.current.applicationContext
+    LaunchedEffect(viewModel) {
+        viewModel.handleIntent(UiIntent.InitPlayer(context))
     }
 
     val configuration = LocalConfiguration.current
