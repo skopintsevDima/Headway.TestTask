@@ -13,14 +13,13 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
-import ua.headway.booksummary.domain.model.BookSummary
+import ua.headway.booksummary.domain.usecase.GetBookSummaryUseCase
 import ua.headway.booksummary.presentation.audio.AudioPlaybackService
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_LOAD_BOOK_DATA
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
@@ -43,8 +42,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookSummaryViewModel @Inject constructor(
+    private val getBookSummaryUseCase: GetBookSummaryUseCase,
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle) // TODO: Fix concurrency
     val uiState: StateFlow<UiState> = _uiState
@@ -314,41 +314,8 @@ class BookSummaryViewModel @Inject constructor(
 
     private suspend fun fetchBookSummary(): UiResult {
         try {
-            // TODO: Fetch real book data
-            delay(1000)
-            val uiResult = UiResult.Success.BookSummaryFetched(
-                BookSummary(
-                    listOf(
-                        BookSummary.SummaryPart(
-                            description = "Summary part 1",
-                            audioUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav",
-                            text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
-                        ),
-                        BookSummary.SummaryPart(
-                            description = "Summary part 2",
-                            audioUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav",
-                            text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
-                        ),
-                        BookSummary.SummaryPart(
-                            description = "Summary part 3",
-                            audioUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/CantinaBand60.wav",
-                            text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
-                        ),
-                        BookSummary.SummaryPart(
-                            description = "Summary part 4",
-                            audioUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/ImperialMarch60.wav",
-                            text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
-                        ),
-                        BookSummary.SummaryPart(
-                            description = "Summary part 5",
-                            audioUrl = "https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther60.wav",
-                            text = "Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum Lorem impsum",
-                        ),
-                    ),
-                    bookCoverUrl = "https://picsum.photos/id/24/1080/1920",
-                )
-            )
-            return uiResult
+            val bookSummary = getBookSummaryUseCase.execute(bookId = 2)
+            return UiResult.Success.BookSummaryFetched(bookSummary)
         } catch (e: Throwable) {
             return UiResult.Failure(ERROR_LOAD_BOOK_DATA, e.message.toString())
         }
