@@ -1,5 +1,7 @@
 package ua.headway.booksummary.presentation.ui.resources
 
+import androidx.media3.common.Player
+
 object Constants {
     object ErrorCodes {
         object BookSummary {
@@ -26,6 +28,9 @@ object Constants {
 
             const val AUDIO_PLAYING_DEFAULT = false
             const val LISTENING_ENABLED_DEFAULT = true
+            const val PLAYER_HANDLE_FOCUS = true
+            const val PLAYER_PLAY_WHEN_READY = true
+            const val PLAYER_REPEAT_MODE = Player.REPEAT_MODE_OFF
 
             const val FORMAT_PLAYBACK_TIME = "%02d:%02d"
 
