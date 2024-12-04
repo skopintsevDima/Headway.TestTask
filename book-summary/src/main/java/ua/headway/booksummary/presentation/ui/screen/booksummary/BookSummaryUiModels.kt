@@ -18,17 +18,26 @@ sealed class UiState {
         val currentAudioPositionMs: Long,
         val currentAudioDurationMs: Long,
         val audioSpeedLevel: Float,
-        val isListeningModeEnabled: Boolean
+        val isListeningModeEnabled: Boolean,
+        val nonCriticalError: NonCriticalError? = null
     ): UiState() {
         val currentSummaryPart: SummaryPart
             get() = summaryParts[currentPartIndex]
         val partsTotal: Int
             get() = summaryParts.size
+
+        data class NonCriticalError(
+            val id: Long,
+            val errorMsg: String
+        )
     }
 
     sealed class Error(val errorMsg: String): UiState() {
-        // TODO: Move SummaryPartsAreOver to Info UiState - not Error!
-        data object NoDataForPlayer: Error("Goddamn! We have nothing to play for you 😔")
+        // TODO: Remove hardcode
+        data object NoDataForPlayerError: Error("Goddamn! We have nothing to play for you 😔")
+        data class LoadBookDataError(val loadDataErrorMsg: String): Error("We tried to load your book, but failed: $loadDataErrorMsg")
+        data class PlayerInitError(val initErrorMsg: String): Error("Oops, player cannot be initialized: $initErrorMsg")
+        data class PlaybackError(val playbackErrorMsg: String): Error("Player has left the chat: $playbackErrorMsg")
         data object UnknownError: Error("Something unknown happened...but Trump will fix it...")
     }
 
@@ -69,7 +78,10 @@ sealed class UiResult {
 
     data class Failure(val errorCode: Int, val errorMsg: String = ""): UiResult() {
         fun toError(): UiState.Error = when (errorCode) {
-            ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER -> UiState.Error.NoDataForPlayer
+            ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER -> UiState.Error.NoDataForPlayerError
+            ErrorCodes.BookSummary.ERROR_LOAD_BOOK_DATA -> UiState.Error.LoadBookDataError(errorMsg)
+            ErrorCodes.BookSummary.ERROR_PLAYER_INIT -> UiState.Error.PlayerInitError(errorMsg)
+            ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK -> UiState.Error.PlaybackError(errorMsg)
             else -> UiState.Error.UnknownError
         }
     }

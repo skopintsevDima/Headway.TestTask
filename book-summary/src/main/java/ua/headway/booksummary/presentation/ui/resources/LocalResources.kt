@@ -13,6 +13,7 @@ object LocalResources {
         val Forward10 = R.drawable.ic_forward_10
         val Headset = R.drawable.ic_headset
         val List = R.drawable.ic_list
+        val Refresh = R.drawable.ic_refresh
     }
 
     // TODO: Заменить везде на это

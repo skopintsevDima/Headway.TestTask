@@ -16,7 +16,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_UNKNOWN
+import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.DELAY_PLAYER_POSITION_UPDATES_MILLIS
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
@@ -163,7 +163,10 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            updatePlaybackState(newPlaybackState = PlaybackState.Error(ERROR_UNKNOWN, error.message.toString()))
+            updatePlaybackState(newPlaybackState = PlaybackState.Error(
+                ERROR_PLAYER_PLAYBACK,
+                error.message.toString()
+            ))
             stopPositionSyncer()
             super.onPlayerError(error)
         }

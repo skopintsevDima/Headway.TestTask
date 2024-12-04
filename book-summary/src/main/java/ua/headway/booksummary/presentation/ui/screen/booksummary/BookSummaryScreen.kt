@@ -2,6 +2,7 @@ package ua.headway.booksummary.presentation.ui.screen.booksummary
 
 import android.content.res.Configuration
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,14 +12,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +32,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Snackbar
@@ -41,6 +47,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,19 +58,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.composable.RequestPermission
+import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.booksummary.presentation.ui.tool.formatTime
 
 // TODO: (EVERYWHERE) Remove all magic constants into Constants + texts to Strings
 // TODO: Remove MaterialTheme import ---> Apply theme from app module
@@ -71,19 +80,29 @@ import ua.headway.booksummary.presentation.ui.resources.LocalResources
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
     InitWithPermissions(viewModel)
 
-    val uiState =  viewModel.uiState.collectAsState()
-    when (val data = uiState.value) {
-        UiState.Idle -> IdleScreen()
-        UiState.Loading -> LoadingScreen()
-        is UiState.Error -> ErrorScreen(data)
-        is UiState.Data -> DataScreen(data, viewModel)
+    val uiState = viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(snackbarHost = { ErrorSnackBar(snackbarHostState) }) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (val stateValue = uiState.value) {
+                UiState.Idle -> IdleScreen()
+                UiState.Loading -> LoadingScreen()
+                is UiState.Error -> ErrorScreen(stateValue, viewModel, snackbarHostState)
+                is UiState.Data -> DataScreen(stateValue, viewModel, snackbarHostState)
+            }
+        }
     }
 }
 
 @Composable
 fun InitWithPermissions(viewModel: BookSummaryViewModel) {
     // TODO: Check if it works correctly
-    val onPermissionGranted = remember(viewModel) { { viewModel.handleIntent(UiIntent.FetchBookSummary) } }
+    val onPermissionGranted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.FetchBookSummary) } }
     when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
             RequestPermission(
@@ -103,36 +122,201 @@ fun InitWithPermissions(viewModel: BookSummaryViewModel) {
 
 @Composable
 private fun IdleScreen() {
-    // TODO: Handle idle state
+    MessageScreen(message = stringResource(R.string.idle_message))
+}
+
+@Composable
+private fun MessageScreen(message: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.body1.copy(
+                color = MaterialTheme.colors.onBackground,
+                fontSize = 24.sp
+            ),
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
 private fun LoadingScreen() {
-    // TODO: Add shimmer
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .height(350.dp)
+                .width(250.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                )
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .height(20.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .height(60.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                )
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp, 20.dp)
+                    .placeholder(
+                        visible = true,
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                    )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(10.dp)
+                    .placeholder(
+                        visible = true,
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                    )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(40.dp, 20.dp)
+                    .placeholder(
+                        visible = true,
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                    )
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier
+                .width(100.dp)
+                .height(40.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                )
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(5) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .placeholder(
+                            visible = true,
+                            highlight = PlaceholderHighlight.shimmer(),
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                        )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .height(40.dp)
+                .placeholder(
+                    visible = true,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
+                )
+        )
+    }
 }
 
 @Composable
-private fun ErrorScreen(error: UiState.Error) {
-    // TODO: Handle errors more visually accurate?
-    val snackbarHostState = remember { SnackbarHostState() }
+fun ErrorScreen(
+    error: UiState.Error,
+    viewModel: BookSummaryViewModel,
+    snackbarHostState: SnackbarHostState
+) {
+    val errorMessage = rememberSaveable(error) { error.errorMsg }
+    val actionLabel = stringResource(R.string.okay)
 
-    val errorMessage = error.errorMsg
-    val actionLabel = stringResource(R.string.oki_doki)
+    // TODO: Don't show error message again after rotation
     LaunchedEffect(errorMessage) {
-        snackbarHostState.showSnackbar(
+        snackbarHostState.showSnackBarSafe(
             message = errorMessage,
             actionLabel = actionLabel
         )
     }
 
+    when (error) {
+        is UiState.Error.LoadBookDataError,
+        UiState.Error.NoDataForPlayerError -> {
+            val onRetryClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.FetchBookSummary) } }
+            DataScreenPlaceholder(onRetryClick)
+        }
+
+        is UiState.Error.PlaybackError,
+        is UiState.Error.PlayerInitError,
+        UiState.Error.UnknownError -> {
+            MessageScreen(message = stringResource(R.string.unknown_error_message_to_user))
+        }
+    }
+}
+
+@Composable
+private fun ErrorSnackBar(snackbarHostState: SnackbarHostState) {
     SnackbarHost(
         hostState = snackbarHostState,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues()),
         snackbar = { snackbarData ->
             Snackbar(
                 action = {
                     snackbarData.actionLabel?.let { actionLabel ->
                         TextButton(onClick = { snackbarData.dismiss() }) {
-                            Text(text = actionLabel, color = LocalResources.Colors.Blue)
+                            Text(text = actionLabel, color = LocalResources.Colors.LightGray)
                         }
                     }
                 }
@@ -144,10 +328,65 @@ private fun ErrorScreen(error: UiState.Error) {
 }
 
 @Composable
-private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+fun DataScreenPlaceholder(onRetryClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                onClick = onRetryClick,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Icon(
+                    modifier = Modifier.size(96.dp),
+                    imageVector = ImageVector.vectorResource(LocalResources.Icons.Refresh),
+                    contentDescription = stringResource(id = R.string.retry),
+                    tint = MaterialTheme.colors.secondary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.retry),
+                style = MaterialTheme.typography.body2.copy(
+                    color = MaterialTheme.colors.onBackground,
+                    fontSize = 24.sp
+                ),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun DataScreen(
+    data: UiState.Data,
+    viewModel: BookSummaryViewModel,
+    snackbarHostState: SnackbarHostState
+) {
     val context = LocalContext.current.applicationContext
     LaunchedEffect(viewModel) {
-        viewModel.handleIntent(UiIntent.InitPlayer(context))
+        viewModel.tryHandleIntent(UiIntent.InitPlayer(context))
+    }
+
+    val nonCriticalErrorMsg = remember(data.nonCriticalError) { data.nonCriticalError?.errorMsg }
+    val actionLabel = stringResource(R.string.okay)
+
+    // TODO: Don't show error message again after rotation
+    LaunchedEffect(data.nonCriticalError) {
+        if (!nonCriticalErrorMsg.isNullOrEmpty()) {
+            snackbarHostState.showSnackBarSafe(
+                message = nonCriticalErrorMsg,
+                actionLabel = actionLabel
+            )
+        }
     }
 
     val configuration = LocalConfiguration.current
@@ -162,16 +401,16 @@ private fun DataScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
 
 @Composable
 fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
-    val onToggleAudioSpeed = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudioSpeed) } }
-    val onToggleAudio = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudio) } }
-    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.handleIntent(UiIntent.StartPlaybackPositionChange) } }
-    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
-    val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
-    val onFastForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
-    val onSkipBackward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoPreviousPart) } }
-    val onSkipForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoNextPart) } }
-    val onAudioModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
-    val onTextModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
+    val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
+    val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
+    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
+    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.tryHandleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
+    val onRewind = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
+    val onFastForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
+    val onSkipBackward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoPreviousPart) } }
+    val onSkipForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoNextPart) } }
+    val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
+    val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
 
     Column(
         modifier = Modifier
@@ -219,16 +458,16 @@ fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
 
 @Composable
 fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
-    val onToggleAudioSpeed = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudioSpeed) } }
-    val onToggleAudio = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleAudio) } }
-    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.handleIntent(UiIntent.StartPlaybackPositionChange) } }
-    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.handleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
-    val onRewind = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
-    val onFastForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
-    val onSkipBackward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoPreviousPart) } }
-    val onSkipForward = remember(viewModel) { { viewModel.handleIntent(UiIntent.GoNextPart) } }
-    val onAudioModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
-    val onTextModeClick = remember(viewModel) { { viewModel.handleIntent(UiIntent.ToggleSummaryMode) } }
+    val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
+    val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
+    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
+    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.tryHandleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
+    val onRewind = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
+    val onFastForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
+    val onSkipBackward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoPreviousPart) } }
+    val onSkipForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoNextPart) } }
+    val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
+    val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
 
     Row(
         modifier = Modifier
@@ -548,21 +787,13 @@ private fun ModeToggleIconButton(
     }
 }
 
-private fun formatTime(milliseconds: Float): String {
-    val minutes = (milliseconds / 60000).toInt()
-    val seconds = ((milliseconds % 60000) / 1000).toInt()
-    return String.format(
-        Locale.current.platformLocale,
-        FORMAT_PLAYBACK_TIME,
-        minutes,
-        seconds
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun BookSummaryPreview() {
-    MaterialTheme {
-        BookSummaryScreen()
+private suspend fun SnackbarHostState.showSnackBarSafe(
+    message: String,
+    actionLabel: String
+) {
+    try {
+        this.showSnackbar(message, actionLabel)
+    } catch (e: Throwable) {
+        Log.e(BookSummary.TAG, "Failed to show SnackBar: ${e.stackTraceToString()}")
     }
 }
