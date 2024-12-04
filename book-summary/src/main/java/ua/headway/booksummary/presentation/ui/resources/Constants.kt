@@ -25,7 +25,7 @@ object Constants {
             const val AUDIO_SPEED_LEVEL_DEFAULT = 1f
             const val REWIND_OFFSET_MILLIS = 5 * 1000L
             const val FAST_FORWARD_OFFSET_MILLIS = 10 * 1000L
-            const val DELAY_PLAYER_POSITION_UPDATES_MILLIS = 50L
+            const val DELAY_PLAYER_SYNC_MILLIS = 50L
 
             const val AUDIO_PLAYING_DEFAULT = false
             const val LISTENING_ENABLED_DEFAULT = true

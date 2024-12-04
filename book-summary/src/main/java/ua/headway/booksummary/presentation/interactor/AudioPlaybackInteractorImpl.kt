@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.DELAY_PLAYER_POSITION_UPDATES_MILLIS
+import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.DELAY_PLAYER_SYNC_MILLIS
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
 class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
@@ -41,16 +41,23 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
             addListener(audioPlayerListener)
             setMediaItems(audioItems)
             prepare()
-            startPositionSyncer()
+            startPlayerSyncer()
         }
     }
 
     override suspend fun subscribeToUpdates(coroutineScope: CoroutineScope): StateFlow<PlaybackState> {
         this.coroutineScope = coroutineScope
         return _playbackState.combine(_playbackPositionState) { playbackState, playbackPosition ->
-            if (playbackState is PlaybackState.Ready){
-                playbackState.copy(currentAudioPositionMs = playbackPosition)
-            } else playbackState
+            withContext(Dispatchers.Main) {
+                if (playbackState is PlaybackState.Ready){
+                    PlaybackState.Ready(
+                        isAudioPlaying = audioPlayer?.isPlaying ?: playbackState.isAudioPlaying,
+                        currentAudioIndex = audioPlayer?.currentMediaItemIndex ?: playbackState.currentAudioIndex,
+                        currentAudioPositionMs = playbackPosition,
+                        currentAudioDurationMs = audioPlayer?.duration ?: playbackState.currentAudioDurationMs,
+                    )
+                } else playbackState
+            }
         }.stateIn(coroutineScope)
     }
 
@@ -64,7 +71,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
     override fun seekTo(positionMs: Long) {
         audioPlayer?.seekTo(positionMs)
-        syncPlayerPosition()
+        syncPlayer()
     }
 
     override fun changeSpeed(speedLevel: Float) {
@@ -73,16 +80,16 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
     override fun skipForward() {
         audioPlayer?.seekToNext()
-        syncPlayerPosition()
+        syncPlayer()
     }
 
     override fun skipBackward() {
         audioPlayer?.seekToPrevious()
-        syncPlayerPosition()
+        syncPlayer()
     }
 
     override fun releasePlayer() {
-        stopPositionSyncer()
+        stopPlayerSyncer()
         audioPlayer?.apply {
             removeListener(audioPlayerListener)
             stop()
@@ -91,27 +98,27 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
         audioPlayer = null
     }
 
-    private fun startPositionSyncer() {
+    private fun startPlayerSyncer() {
         if (syncPlaybackPositionJob == null) {
             syncPlaybackPositionJob = coroutineScope?.launch {
                 while (isActive) {
-                    delay(DELAY_PLAYER_POSITION_UPDATES_MILLIS)
+                    delay(DELAY_PLAYER_SYNC_MILLIS)
                     withContext(Dispatchers.Main) {
-                        syncPlayerPosition()
+                        syncPlayer()
                     }
                 }
             }
         }
     }
 
-    private fun syncPlayerPosition() {
+    private fun syncPlayer() {
         audioPlayer?.run {
             val newAudioPositionMs = this.currentPosition
             coroutineScope?.launch { _playbackPositionState.emit(newAudioPositionMs) }
         }
     }
 
-    private fun stopPositionSyncer() {
+    private fun stopPlayerSyncer() {
         syncPlaybackPositionJob?.cancel()
         syncPlaybackPositionJob = null
     }
@@ -132,11 +139,11 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                         currentAudioDurationMs = audioPlayer?.duration ?: 0
                     )
                     updatePlaybackState(newPlaybackState)
-                    startPositionSyncer()
+                    startPlayerSyncer()
                 }
                 else -> {
                     updatePlaybackState(newPlaybackState = PlaybackState.Idle)
-                    stopPositionSyncer()
+                    stopPlayerSyncer()
                 }
             }
             super.onPlaybackStateChanged(state)
@@ -174,7 +181,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                 ERROR_PLAYER_PLAYBACK,
                 error.message.toString()
             ))
-            stopPositionSyncer()
+            stopPlayerSyncer()
             super.onPlayerError(error)
         }
     }
