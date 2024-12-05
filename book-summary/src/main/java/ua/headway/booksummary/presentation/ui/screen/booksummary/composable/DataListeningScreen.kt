@@ -54,14 +54,14 @@ fun DataListeningScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     if (isLandscape) {
-        DataLandscapeScreen(data, viewModel)
+        DataListeningLandscapeScreen(data, viewModel)
     } else {
-        DataPortraitScreen(data, viewModel)
+        DataListeningPortraitScreen(data, viewModel)
     }
 }
 
 @Composable
-private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
     val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
     val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
@@ -98,7 +98,7 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
         Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Large))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
@@ -109,16 +109,19 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
             onSkipForward = onSkipForward
         )
 
+        Spacer(modifier = Modifier.weight(1f))
+
         SummaryModeToggle(
             isListeningModeEnabled = data.isListeningModeEnabled,
             onAudioModeClick = onAudioModeClick,
             onTextModeClick = onTextModeClick
         )
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait))
     }
 }
 
 @Composable
-private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
     val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
     val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
@@ -165,7 +168,7 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
             Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
             PlaybackControls(
                 isAudioPlaying = data.isAudioPlaying,
@@ -175,13 +178,15 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
                 onSkipBackward = onSkipBackward,
                 onSkipForward = onSkipForward
             )
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+
+            Spacer(modifier = Modifier.weight(1f))
 
             SummaryModeToggle(
                 isListeningModeEnabled = data.isListeningModeEnabled,
                 onAudioModeClick = onAudioModeClick,
                 onTextModeClick = onTextModeClick
             )
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape))
         }
     }
 }

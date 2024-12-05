@@ -62,6 +62,9 @@ object LocalResources {
             val Medium = 16.dp
             val Large = 24.dp
             val ExtraLarge = 32.dp
+
+            val SummaryToggleBottomPortrait = 48.dp
+            val SummaryToggleBottomLandscape = 16.dp
         }
 
         object Image {

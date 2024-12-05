@@ -99,7 +99,6 @@ fun SummaryModeToggle(
     val rowShape = RoundedCornerShape(50)
     Row(
         modifier = Modifier
-            .padding(top = LocalResources.Dimensions.Padding.ExtraLarge)
             .clip(rowShape)
             .background(LocalResources.Colors.White)
             .border(

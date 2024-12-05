@@ -98,6 +98,7 @@ fun DataReadingPortraitScreen(
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(onClick = onSkipBack) {
@@ -124,7 +125,7 @@ fun DataReadingPortraitScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait))
     }
 }
 
@@ -155,7 +156,8 @@ fun DataReadingLandscapeScreen(
         Column(
             modifier = Modifier
                 .weight(2f)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .padding(start = LocalResources.Dimensions.Padding.Medium),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
@@ -185,6 +187,7 @@ fun DataReadingLandscapeScreen(
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 IconButton(onClick = onSkipBack) {
@@ -211,6 +214,7 @@ fun DataReadingLandscapeScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape))
         }
     }
 }
