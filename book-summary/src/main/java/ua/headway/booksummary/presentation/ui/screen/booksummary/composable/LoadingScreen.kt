@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
+import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
 @Suppress("DEPRECATION")
 @Composable
@@ -26,20 +27,20 @@ fun LoadingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(LocalResources.Dimensions.Padding.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .height(350.dp)
-                .width(250.dp)
+                .height(LocalResources.Dimensions.Image.Height)
+                .width(LocalResources.Dimensions.Image.Width)
                 .placeholder(
                     visible = true,
                     highlight = PlaceholderHighlight.shimmer(),
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                 )
         )
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
         Box(
             modifier = Modifier
@@ -51,7 +52,7 @@ fun LoadingScreen() {
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                 )
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         Box(
             modifier = Modifier
@@ -63,24 +64,24 @@ fun LoadingScreen() {
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp),
+                .height(LocalResources.Dimensions.Icon.Small),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp, 20.dp)
+                    .size(LocalResources.Dimensions.Icon.Small, 20.dp)
                     .placeholder(
                         visible = true,
                         highlight = PlaceholderHighlight.shimmer(),
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                     )
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(LocalResources.Dimensions.Padding.Small))
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -91,10 +92,10 @@ fun LoadingScreen() {
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                     )
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(LocalResources.Dimensions.Padding.Small))
             Box(
                 modifier = Modifier
-                    .size(40.dp, 20.dp)
+                    .size(LocalResources.Dimensions.Icon.Small, 20.dp)
                     .placeholder(
                         visible = true,
                         highlight = PlaceholderHighlight.shimmer(),
@@ -102,7 +103,7 @@ fun LoadingScreen() {
                     )
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         Box(
             modifier = Modifier
@@ -114,7 +115,7 @@ fun LoadingScreen() {
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                 )
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
         Row(
             modifier = Modifier
@@ -125,7 +126,7 @@ fun LoadingScreen() {
             repeat(5) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(LocalResources.Dimensions.Icon.Medium)
                         .placeholder(
                             visible = true,
                             highlight = PlaceholderHighlight.shimmer(),
@@ -134,7 +135,7 @@ fun LoadingScreen() {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Large))
 
         Box(
             modifier = Modifier

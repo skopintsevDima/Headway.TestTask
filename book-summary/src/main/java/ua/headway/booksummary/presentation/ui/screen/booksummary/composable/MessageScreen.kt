@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
+import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
 @Composable
 fun MessageScreen(message: String) {
@@ -23,7 +23,7 @@ fun MessageScreen(message: String) {
             text = message,
             style = MaterialTheme.typography.body1.copy(
                 color = MaterialTheme.colors.onBackground,
-                fontSize = 24.sp
+                fontSize = LocalResources.Dimensions.Text.SizeLarge
             ),
             textAlign = TextAlign.Center
         )

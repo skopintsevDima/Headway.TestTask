@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -30,10 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.composable.RequestPermission
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
@@ -88,7 +84,7 @@ private fun InitWithPermissions(viewModel: BookSummaryViewModel) {
 
 @Composable
 private fun IdleScreen() {
-    MessageScreen(message = stringResource(R.string.idle_message))
+    MessageScreen(message = stringResource(LocalResources.Strings.IdleMessage))
 }
 
 @Composable
@@ -98,7 +94,7 @@ private fun ErrorScreen(
     snackbarHostState: SnackbarHostState
 ) {
     val errorMessage = rememberSaveable(error) { error.errorMsg }
-    val actionLabel = stringResource(R.string.okay)
+    val actionLabel = stringResource(LocalResources.Strings.Okay)
 
     LaunchedEffect(errorMessage) {
         snackbarHostState.showSnackBarSafe(
@@ -117,7 +113,7 @@ private fun ErrorScreen(
         is UiState.Error.PlaybackError,
         is UiState.Error.PlayerInitError,
         UiState.Error.UnknownError -> {
-            MessageScreen(message = stringResource(R.string.unknown_error_message_to_user))
+            MessageScreen(message = stringResource(LocalResources.Strings.UnknownErrorMessage))
         }
     }
 }
@@ -136,23 +132,23 @@ private fun DataScreenPlaceholder(onRetryClick: () -> Unit) {
         ) {
             IconButton(
                 onClick = onRetryClick,
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.ExtraLarge)
             ) {
                 Icon(
-                    modifier = Modifier.size(96.dp),
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.ExtraLarge),
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.Refresh),
-                    contentDescription = stringResource(id = R.string.retry),
+                    contentDescription = stringResource(id = LocalResources.Strings.Retry),
                     tint = MaterialTheme.colors.secondary
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             Text(
-                text = stringResource(id = R.string.retry),
+                text = stringResource(id = LocalResources.Strings.Retry),
                 style = MaterialTheme.typography.body2.copy(
                     color = MaterialTheme.colors.onBackground,
-                    fontSize = 24.sp
+                    fontSize = LocalResources.Dimensions.Text.SizeLarge
                 ),
                 textAlign = TextAlign.Center
             )
@@ -172,7 +168,7 @@ private fun DataScreen(
     }
 
     val nonCriticalErrorMsg = remember(data.nonCriticalError) { data.nonCriticalError?.errorMsg }
-    val actionLabel = stringResource(R.string.okay)
+    val actionLabel = stringResource(LocalResources.Strings.Okay)
 
     LaunchedEffect(data.nonCriticalError) {
         if (!nonCriticalErrorMsg.isNullOrEmpty()) {
