@@ -1,6 +1,7 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
 import android.content.Context
+import androidx.compose.runtime.Stable
 import ua.headway.booksummary.domain.model.BookSummary
 import ua.headway.booksummary.domain.model.BookSummary.SummaryPart
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes
@@ -10,7 +11,7 @@ sealed class UiState {
     data object Loading: UiState()
 
     data class Data(
-        val summaryParts: List<SummaryPart>,
+        @Stable val summaryParts: List<SummaryPart>,
         val bookCoverUrl: String,
         val currentPartIndex: Int,
         val isPlayerReady: Boolean,
