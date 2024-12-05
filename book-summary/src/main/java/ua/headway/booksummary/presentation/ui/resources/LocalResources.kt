@@ -16,6 +16,11 @@ object LocalResources {
         val Refresh = R.drawable.ic_refresh
     }
 
+    object Images {
+        val PlaceholderImage = R.drawable.placeholder_image
+        val PlaceholderError = R.drawable.placeholder_error
+    }
+
     object Strings {
         val NotificationChannelName = R.string.notification_channel_name
         val KeyPointTitle = R.string.key_point_title

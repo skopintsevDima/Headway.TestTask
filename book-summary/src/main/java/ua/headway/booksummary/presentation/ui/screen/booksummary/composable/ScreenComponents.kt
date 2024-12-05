@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,16 +42,25 @@ import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
 @Composable
-fun TopBookCover(bookCoverUrl: String, modifier: Modifier = Modifier) {
-    // TODO: Add placeholder image for: loading, error
+fun TopBookCover(
+    bookCoverUrl: String,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier
             .height(350.dp)
             .width(250.dp)
             .padding(top = 32.dp)
     ) {
+        val painter = rememberAsyncImagePainter(
+            model = bookCoverUrl,
+            placeholder = painterResource(id = LocalResources.Images.PlaceholderImage),
+            error = painterResource(id = LocalResources.Images.PlaceholderError),
+            contentScale = ContentScale.Crop
+        )
+
         Image(
-            painter = rememberAsyncImagePainter(model = bookCoverUrl),
+            painter = painter,
             contentDescription = "Book Cover",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
