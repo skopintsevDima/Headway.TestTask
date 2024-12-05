@@ -55,7 +55,8 @@ object LocalResources {
         }
 
         object Button {
-            val Height = 40.dp
+            val HeightSmall = 40.dp
+            val WidthSmall = 100.dp
         }
 
         object Icon {
@@ -69,6 +70,10 @@ object LocalResources {
             val SizeLarge = 24.sp
             val SizeMedium = 16.sp
             val SizeSmall = 14.sp
+            val SizeTiny = 10.dp
+
+            val HeightSmall = 20.dp
+            val HeightMedium = 60.dp
 
             val SpacingLarge = 1.5.sp
             val SpacingSmall = 0.5.sp
@@ -77,6 +82,11 @@ object LocalResources {
         object Size {
             val BorderWidth = 1.dp
             val ButtonCornerRadius = 8.dp
+
+            object FillWidth {
+                val Half = 0.5f
+                val Large = 0.8f
+            }
         }
     }
 }

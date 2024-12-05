@@ -266,7 +266,7 @@ private fun PlaybackSpeedToggle(
         contentPadding = PaddingValues(horizontal = LocalResources.Dimensions.Padding.Small),
         modifier = Modifier
             .wrapContentWidth()
-            .height(LocalResources.Dimensions.Button.Height),
+            .height(LocalResources.Dimensions.Button.HeightSmall),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp)
     ) {
         Text(
