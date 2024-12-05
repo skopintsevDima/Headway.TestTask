@@ -6,6 +6,9 @@
     <string name="retry">Retry</string>
     <string name="idle_message">Let\'s listen to something beneficial…</string>
 
+    <string name="content_description_skip_back">Skip backward</string>
+    <string name="content_description_skip_forward">Skip forward</string>
+
     <string name="error_no_data_for_player">Goddamn! We have nothing to play for you 😔</string>
     <string name="error_load_book_data">We tried to load your book, but failed: %1$s</string>
     <string name="error_player_init">Oops, player cannot be initialized: %1$s</string>

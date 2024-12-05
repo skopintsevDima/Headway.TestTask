@@ -35,10 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
 @Composable
@@ -48,9 +45,9 @@ fun TopBookCover(
 ) {
     Box(
         modifier = modifier
-            .height(350.dp)
-            .width(250.dp)
-            .padding(top = 32.dp)
+            .height(LocalResources.Dimensions.Image.Height)
+            .width(LocalResources.Dimensions.Image.Width)
+            .padding(top = LocalResources.Dimensions.Padding.ExtraLarge)
     ) {
         val painter = rememberAsyncImagePainter(
             model = bookCoverUrl,
@@ -71,11 +68,11 @@ fun TopBookCover(
 @Composable
 fun PartNumberTitle(partNumber: Int, partsTotal: Int) {
     Text(
-        text = stringResource(R.string.key_point_title, partNumber, partsTotal),
+        text = stringResource(LocalResources.Strings.KeyPointTitle, partNumber, partsTotal),
         style = MaterialTheme.typography.body1.copy(
             color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Medium,
-            letterSpacing = 1.5.sp
+            letterSpacing = LocalResources.Dimensions.Text.SpacingLarge
         )
     )
 }
@@ -83,7 +80,7 @@ fun PartNumberTitle(partNumber: Int, partsTotal: Int) {
 @Composable
 fun PartDescription(currentPartDescription: String) {
     Text(
-        modifier = Modifier.padding(horizontal = 8.dp),
+        modifier = Modifier.padding(horizontal = LocalResources.Dimensions.Padding.Small),
         text = currentPartDescription,
         style = MaterialTheme.typography.body1.copy(
             fontWeight = FontWeight.Normal,
@@ -102,10 +99,14 @@ fun SummaryModeToggle(
     val rowShape = RoundedCornerShape(50)
     Row(
         modifier = Modifier
-            .padding(top = 32.dp)
+            .padding(top = LocalResources.Dimensions.Padding.ExtraLarge)
             .clip(rowShape)
             .background(LocalResources.Colors.White)
-            .border(width = 1.dp, color = LocalResources.Colors.LightGray, shape = rowShape),
+            .border(
+                width = LocalResources.Dimensions.Size.BorderWidth,
+                color = LocalResources.Colors.LightGray,
+                shape = rowShape
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -136,7 +137,7 @@ private fun ModeToggleIconButton(
         onClick = onClick,
         enabled = !isSelected,
         modifier = Modifier
-            .padding(4.dp)
+            .padding(LocalResources.Dimensions.Padding.ExtraSmall)
             .wrapContentWidth()
             .wrapContentHeight()
             .background(
@@ -146,7 +147,7 @@ private fun ModeToggleIconButton(
             )
     ) {
         Icon(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(LocalResources.Dimensions.Padding.Medium),
             imageVector = icon,
             contentDescription = description,
             tint = LocalResources.Colors.White.takeIf { isSelected } ?: LocalResources.Colors.Black,

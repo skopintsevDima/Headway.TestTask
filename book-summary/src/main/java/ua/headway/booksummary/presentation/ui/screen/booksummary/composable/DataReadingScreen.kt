@@ -25,10 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryViewModel
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiIntent
@@ -66,17 +65,17 @@ fun DataReadingPortraitScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(16.dp),
+            .padding(LocalResources.Dimensions.Padding.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopBookCover(data.bookCoverUrl)
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Large))
 
         PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         PartDescription(data.currentSummaryPart.description)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         Box(
             modifier = Modifier
@@ -88,14 +87,14 @@ fun DataReadingPortraitScreen(
                 text = data.currentSummaryPart.text,
                 style = MaterialTheme.typography.body1.copy(
                     color = MaterialTheme.colors.onBackground,
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp
+                    fontSize = LocalResources.Dimensions.Text.SizeMedium,
+                    lineHeight = LocalResources.Dimensions.Text.SizeLarge
                 ),
                 textAlign = TextAlign.Start
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -104,9 +103,9 @@ fun DataReadingPortraitScreen(
             IconButton(onClick = onSkipBack) {
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
-                    contentDescription = "Skip Back",
+                    contentDescription = stringResource(LocalResources.Strings.SkipBack),
                     tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
                 )
             }
 
@@ -119,13 +118,13 @@ fun DataReadingPortraitScreen(
             IconButton(onClick = onSkipForward) {
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
-                    contentDescription = "Skip Forward",
+                    contentDescription = stringResource(LocalResources.Strings.SkipForward),
                     tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
                 )
             }
         }
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
     }
 }
 
@@ -144,13 +143,13 @@ fun DataReadingLandscapeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(16.dp)
+            .padding(LocalResources.Dimensions.Padding.Medium)
     ) {
         TopBookCover(
             bookCoverUrl = data.bookCoverUrl,
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 16.dp)
+                .padding(end = LocalResources.Dimensions.Padding.Medium)
         )
 
         Column(
@@ -160,10 +159,10 @@ fun DataReadingLandscapeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             PartDescription(data.currentSummaryPart.description)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             Box(
                 modifier = Modifier
@@ -175,14 +174,14 @@ fun DataReadingLandscapeScreen(
                     text = data.currentSummaryPart.text,
                     style = MaterialTheme.typography.body1.copy(
                         color = MaterialTheme.colors.onBackground,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp
+                        fontSize = LocalResources.Dimensions.Text.SizeMedium,
+                        lineHeight = LocalResources.Dimensions.Text.SizeLarge
                     ),
                     textAlign = TextAlign.Start
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -191,9 +190,9 @@ fun DataReadingLandscapeScreen(
                 IconButton(onClick = onSkipBack) {
                     Icon(
                         imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
-                        contentDescription = "Skip Back",
+                        contentDescription = stringResource(LocalResources.Strings.SkipBack),
                         tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
                     )
                 }
 
@@ -206,9 +205,9 @@ fun DataReadingLandscapeScreen(
                 IconButton(onClick = onSkipForward) {
                     Icon(
                         imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
-                        contentDescription = "Skip Forward",
+                        contentDescription = stringResource(LocalResources.Strings.SkipForward),
                         tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
                     )
                 }
             }

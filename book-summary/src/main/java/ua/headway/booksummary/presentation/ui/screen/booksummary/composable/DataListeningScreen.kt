@@ -37,8 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
@@ -79,17 +77,17 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
-            .padding(16.dp),
+            .padding(LocalResources.Dimensions.Padding.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopBookCover(data.bookCoverUrl)
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
         PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         PartDescription(data.currentSummaryPart.description)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         PlaybackProgressBar(
             playbackTimeMs = data.currentAudioPositionMs.toFloat(),
@@ -97,10 +95,10 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
             onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
             onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
         PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Large))
 
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
@@ -136,27 +134,27 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
-            .padding(16.dp)
+            .padding(LocalResources.Dimensions.Padding.Medium)
     ) {
         TopBookCover(
             bookCoverUrl = data.bookCoverUrl,
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 16.dp)
+                .padding(end = LocalResources.Dimensions.Padding.Medium)
         )
 
         Column(
             modifier = Modifier
                 .weight(2f)
                 .fillMaxHeight()
-                .padding(start = 16.dp),
+                .padding(start = LocalResources.Dimensions.Padding.Medium),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             PartDescription(data.currentSummaryPart.description)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             PlaybackProgressBar(
                 playbackTimeMs = data.currentAudioPositionMs.toFloat(),
@@ -164,10 +162,10 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
                 onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
                 onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             PlaybackControls(
                 isAudioPlaying = data.isAudioPlaying,
@@ -177,7 +175,7 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
                 onSkipBackward = onSkipBackward,
                 onSkipForward = onSkipForward
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
 
             SummaryModeToggle(
                 isListeningModeEnabled = data.isListeningModeEnabled,
@@ -212,7 +210,7 @@ private fun PlaybackProgressBar(
             style = MaterialTheme.typography.caption.copy(
                 color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Light,
-                fontSize = 14.sp
+                fontSize = LocalResources.Dimensions.Text.SizeSmall
             )
         )
         Slider(
@@ -228,7 +226,7 @@ private fun PlaybackProgressBar(
             valueRange = 0f..totalTimeMs,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 2.dp),
+                .padding(horizontal = LocalResources.Dimensions.Padding.ExtraSmall),
             colors = SliderDefaults.colors(
                 thumbColor = LocalResources.Colors.Blue,
                 activeTrackColor = LocalResources.Colors.Blue,
@@ -240,7 +238,7 @@ private fun PlaybackProgressBar(
             style = MaterialTheme.typography.caption.copy(
                 color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.Light,
-                fontSize = 14.sp
+                fontSize = LocalResources.Dimensions.Text.SizeSmall
             )
         )
     }
@@ -264,20 +262,20 @@ private fun PlaybackSpeedToggle(
     Button(
         onClick = onSpeedToggle,
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
-        shape = RoundedCornerShape(corner = CornerSize(8.dp)),
-        contentPadding = PaddingValues(horizontal = 10.dp),
+        shape = RoundedCornerShape(corner = CornerSize(LocalResources.Dimensions.Size.ButtonCornerRadius)),
+        contentPadding = PaddingValues(horizontal = LocalResources.Dimensions.Padding.Small),
         modifier = Modifier
             .wrapContentWidth()
-            .height(40.dp),
+            .height(LocalResources.Dimensions.Button.HeightSmall),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp)
     ) {
         Text(
-            text = stringResource(R.string.speed, playbackSpeedFormatted),
+            text = stringResource(LocalResources.Strings.Speed, playbackSpeedFormatted),
             style = MaterialTheme.typography.button.copy(
                 color = MaterialTheme.colors.onSurface,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
-                letterSpacing = 0.5.sp
+                fontSize = LocalResources.Dimensions.Text.SizeMedium,
+                letterSpacing = LocalResources.Dimensions.Text.SpacingSmall
             ),
         )
     }
@@ -299,7 +297,7 @@ private fun PlaybackControls(
     ) {
         IconButton(onClick = onSkipBackward) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                 contentDescription = "Skip Back",
                 tint = MaterialTheme.colors.secondary
@@ -308,7 +306,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onRewind) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Rewind5),
                 contentDescription = "Rewind 5 seconds",
                 tint = MaterialTheme.colors.secondary
@@ -317,7 +315,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onToggleAudio) {
             Icon(
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.Large),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Pause.takeIf {
                     isAudioPlaying
                 } ?: LocalResources.Icons.Play),
@@ -328,7 +326,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onFastForward) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Forward10),
                 contentDescription = "Fast Forward 10 Seconds",
                 tint = MaterialTheme.colors.secondary
@@ -337,7 +335,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onSkipForward) {
             Icon(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                 contentDescription = "Skip Forward",
                 tint = MaterialTheme.colors.secondary
