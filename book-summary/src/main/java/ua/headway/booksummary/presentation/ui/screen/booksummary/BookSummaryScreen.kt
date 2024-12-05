@@ -109,14 +109,14 @@ private fun ErrorScreen(
 
     when (error) {
         is UiState.Error.LoadBookDataError,
-        UiState.Error.NoDataForPlayerError -> {
+        is UiState.Error.NoDataForPlayerError -> {
             val onRetryClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.FetchBookSummary) } }
             DataScreenPlaceholder(onRetryClick)
         }
 
         is UiState.Error.PlaybackError,
         is UiState.Error.PlayerInitError,
-        UiState.Error.UnknownError -> {
+        is UiState.Error.UnknownError -> {
             MessageScreen(message = stringResource(R.string.unknown_error_message_to_user))
         }
     }

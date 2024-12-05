@@ -6,6 +6,16 @@
     <string name="retry">Retry</string>
     <string name="idle_message">Let\'s listen to something beneficial…</string>
 
+    <string name="error_no_data_for_player">Goddamn! We have nothing to play for you 😔</string>
+    <string name="error_load_book_data">We tried to load your book, but failed: %1$s</string>
+    <string name="error_player_init">Oops, player cannot be initialized: %1$s</string>
+    <string name="error_playback">Player has left the chat: %1$s</string>
+    <string name="error_player_seek_failed">Nice try 👏, but we can\'t seek to this position!</string>
+    <string name="error_player_toggle_failed">Oops, we can\'t toggle your audio 😔</string>
+    <string name="error_player_speed_change_failed">Not so fast!</string>
+    <string name="error_player_skip_failed">Nah, let\'s keep this one ☝️</string>
+    <string name="error_unknown">Something unknown happened…but Trump will fix it…</string>
+
     <string name="unknown_error_message_to_user">We would recommend to restart the app 🫶</string>
     <string name="permission_denied_error_message_to_user">Permission denied: we can\'t move forward 🥲</string>
 </resources>

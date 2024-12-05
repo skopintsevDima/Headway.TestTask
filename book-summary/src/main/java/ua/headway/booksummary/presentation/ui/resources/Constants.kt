@@ -34,11 +34,6 @@ object Constants {
             const val PLAYER_REPEAT_MODE = Player.REPEAT_MODE_OFF
 
             const val FORMAT_PLAYBACK_TIME = "%02d:%02d"
-
-            const val ERROR_MSG_PLAYER_SEEK_FAILED = "Nice try 👏, but we can't seek to this position!"
-            const val ERROR_MSG_PLAYER_TOGGLE_FAILED = "Oops, we can't toggle your audio 😔"
-            const val ERROR_MSG_PLAYER_SPEED_CHANGE_FAILED = "Not so fast!"
-            const val ERROR_MSG_PLAYER_SKIP_FAILED = "Nah, let's keep this one ☝️"
         }
     }
 }

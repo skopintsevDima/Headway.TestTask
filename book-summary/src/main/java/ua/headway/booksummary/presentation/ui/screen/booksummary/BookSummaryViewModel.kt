@@ -31,10 +31,6 @@ import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.Boo
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TOGGLE_FAILED
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_UNKNOWN
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.ERROR_MSG_PLAYER_SEEK_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.ERROR_MSG_PLAYER_SKIP_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.ERROR_MSG_PLAYER_SPEED_CHANGE_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.ERROR_MSG_PLAYER_TOGGLE_FAILED
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState.Data.NonCriticalError
@@ -281,15 +277,23 @@ class BookSummaryViewModel @Inject constructor(
             }
 
             when (result.errorCode) {
-                ERROR_PLAYER_SEEK_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_SEEK_FAILED)
-                ERROR_PLAYER_TOGGLE_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_TOGGLE_FAILED)
-                ERROR_PLAYER_SPEED_CHANGE_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_SPEED_CHANGE_FAILED)
-                ERROR_PLAYER_SKIP_FAILED -> onNonCriticalErrorOccurred(ERROR_MSG_PLAYER_SKIP_FAILED)
+                ERROR_PLAYER_SEEK_FAILED -> onNonCriticalErrorOccurred(
+                    resourceProvider.getString(LocalResources.Strings.ErrorPlayerSeekFailed)
+                )
+                ERROR_PLAYER_TOGGLE_FAILED -> onNonCriticalErrorOccurred(
+                    resourceProvider.getString(LocalResources.Strings.ErrorPlayerToggleFailed)
+                )
+                ERROR_PLAYER_SPEED_CHANGE_FAILED -> onNonCriticalErrorOccurred(
+                    resourceProvider.getString(LocalResources.Strings.ErrorPlayerSpeedChangeFailed)
+                )
+                ERROR_PLAYER_SKIP_FAILED -> onNonCriticalErrorOccurred(
+                    resourceProvider.getString(LocalResources.Strings.ErrorPlayerSkipFailed)
+                )
                 ERROR_PLAYER_TEMPORARILY_UNAVAILABLE -> {
                     Log.e(UI.BookSummary.TAG, "ERROR_PLAYER_TEMPORARILY_UNAVAILABLE: previousState = $previousState")
                     previousState
                 }
-                else -> result.toError()
+                else -> result.toError(resourceProvider)
             }
         }
 

@@ -24,6 +24,16 @@ object LocalResources {
     object Strings {
         val NotificationChannelName = R.string.notification_channel_name
         val KeyPointTitle = R.string.key_point_title
+
+        val ErrorNoDataForPlayer = R.string.error_no_data_for_player
+        val ErrorLoadBookData = R.string.error_load_book_data
+        val ErrorPlayerInit = R.string.error_player_init
+        val ErrorPlayback = R.string.error_playback
+        val ErrorPlayerSeekFailed = R.string.error_player_seek_failed
+        val ErrorPlayerToggleFailed = R.string.error_player_toggle_failed
+        val ErrorPlayerSpeedChangeFailed = R.string.error_player_speed_change_failed
+        val ErrorPlayerSkipFailed = R.string.error_player_skip_failed
+        val ErrorUnknown = R.string.error_unknown
     }
 
     object Colors {
