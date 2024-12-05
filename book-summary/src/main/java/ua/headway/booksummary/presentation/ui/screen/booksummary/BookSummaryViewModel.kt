@@ -321,7 +321,7 @@ class BookSummaryViewModel @Inject constructor(
 
     private suspend fun fetchBookSummary(): UiResult {
         try {
-            val bookSummary = getBookSummaryUseCase.execute(bookId = 2)
+            val bookSummary = getBookSummaryUseCase.execute(bookId = 3)
             return UiResult.Success.BookSummaryFetched(bookSummary)
         } catch (e: Throwable) {
             return UiResult.Failure(ERROR_LOAD_BOOK_DATA, e.message.toString())

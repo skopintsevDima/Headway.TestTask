@@ -1,13 +1,15 @@
 package ua.headway.booksummary.data.di.source
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ua.headway.booksummary.data.source.api.ApiBookSource
-import ua.headway.booksummary.data.source.base.BookSource
-import ua.headway.booksummary.data.source.db.DbBookSource
-import ua.headway.booksummary.data.source.memory.MemoryBookSource
+import ua.headway.booksummary.data.api.ApiBookSource
+import ua.headway.booksummary.data.source.BookSource
+import ua.headway.booksummary.data.db.DbBookSource
+import ua.headway.booksummary.data.memory.MemoryBookSource
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -18,7 +20,9 @@ class DataSourceModule {
 
     @Provides
     @NetworkSource
-    fun provideNetworkBookSource(): BookSource = ApiBookSource()
+    fun provideNetworkBookSource(
+        @ApplicationContext context: Context
+    ): BookSource = ApiBookSource(context)
 
     @Provides
     @DatabaseSource

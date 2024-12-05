@@ -8,7 +8,7 @@ import ua.headway.booksummary.data.di.source.DatabaseSource
 import ua.headway.booksummary.data.di.source.MemorySource
 import ua.headway.booksummary.data.di.source.NetworkSource
 import ua.headway.booksummary.data.repository.BookRepositoryImpl
-import ua.headway.booksummary.data.source.base.BookSource
+import ua.headway.booksummary.data.source.BookSource
 import ua.headway.booksummary.domain.repository.BookRepository
 
 @Module

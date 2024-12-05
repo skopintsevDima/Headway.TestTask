@@ -57,7 +57,11 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.google.accompanist.placeholder.material)
+    implementation(libs.squareup.moshi)
+    implementation(libs.squareup.moshi.kotlin)
     kapt(libs.hilt.compiler)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.squareup.moshi.codegen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

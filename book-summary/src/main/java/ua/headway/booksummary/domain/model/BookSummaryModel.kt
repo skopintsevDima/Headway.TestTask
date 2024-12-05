@@ -1,7 +1,6 @@
 package ua.headway.booksummary.domain.model
 
-
-data class BookSummary(
+data class BookSummaryModel(
     val id: Long,
     val summaryParts: List<SummaryPart>,
     val bookCoverUrl: String

@@ -2,8 +2,8 @@ package ua.headway.booksummary.presentation.ui.screen.booksummary
 
 import android.content.Context
 import androidx.compose.runtime.Stable
-import ua.headway.booksummary.domain.model.BookSummary
-import ua.headway.booksummary.domain.model.BookSummary.SummaryPart
+import ua.headway.booksummary.domain.model.BookSummaryModel
+import ua.headway.booksummary.domain.model.BookSummaryModel.SummaryPart
 import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
@@ -65,7 +65,7 @@ sealed class UiResult {
     data object Loading: UiResult()
 
     sealed class Success: UiResult() {
-        data class BookSummaryFetched(val bookSummary: BookSummary): Success()
+        data class BookSummaryFetched(val bookSummary: BookSummaryModel): Success()
         data object PlayerInitiated: Success()
         data class AudioSpeedChanged(val audioSpeedLevel: Float): Success()
         data class SummaryModeToggled(val isListeningModeEnabled: Boolean): Success()
