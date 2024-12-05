@@ -43,7 +43,7 @@ import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryViewModel
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiIntent
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState
-import ua.headway.booksummary.presentation.ui.tool.formatTime
+import ua.headway.booksummary.presentation.ui.util.formatTime
 
 @Composable
 fun DataListeningScreen(

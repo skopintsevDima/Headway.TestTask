@@ -10,6 +10,7 @@ import ua.headway.booksummary.data.di.source.NetworkSource
 import ua.headway.booksummary.data.repository.BookRepositoryImpl
 import ua.headway.booksummary.data.source.BookSource
 import ua.headway.booksummary.domain.repository.BookRepository
+import ua.headway.booksummary.domain.usecase.CheckInternetUseCase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -18,10 +19,12 @@ class RepositoryModule {
     fun provideBookRepository(
         @MemorySource memoryBookSource: BookSource,
         @NetworkSource networkBookSource: BookSource,
-        @DatabaseSource dbBookSource: BookSource
+        @DatabaseSource dbBookSource: BookSource,
+        checkInternetUseCase: CheckInternetUseCase
     ): BookRepository = BookRepositoryImpl(
         memoryBookSource,
         networkBookSource,
-        dbBookSource
+        dbBookSource,
+        checkInternetUseCase
     )
 }

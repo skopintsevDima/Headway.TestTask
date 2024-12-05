@@ -1,4 +1,4 @@
-package ua.headway.booksummary.presentation.ui.tool
+package ua.headway.booksummary.presentation.ui.util
 
 import androidx.compose.ui.text.intl.Locale
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
