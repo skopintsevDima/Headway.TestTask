@@ -43,7 +43,6 @@ import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.Erro
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.LoadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.MessageScreen
 
-// TODO: (EVERYWHERE) Remove all magic constants into Constants + texts to Strings
 @Composable
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
     InitWithPermissions(viewModel)
@@ -69,7 +68,6 @@ fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
 
 @Composable
 private fun InitWithPermissions(viewModel: BookSummaryViewModel) {
-    // TODO: Check if it works correctly
     val onPermissionGranted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.FetchBookSummary) } }
     when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
@@ -102,7 +100,6 @@ private fun ErrorScreen(
     val errorMessage = rememberSaveable(error) { error.errorMsg }
     val actionLabel = stringResource(R.string.okay)
 
-    // TODO: Don't show error message again after rotation
     LaunchedEffect(errorMessage) {
         snackbarHostState.showSnackBarSafe(
             message = errorMessage,
@@ -177,7 +174,6 @@ private fun DataScreen(
     val nonCriticalErrorMsg = remember(data.nonCriticalError) { data.nonCriticalError?.errorMsg }
     val actionLabel = stringResource(R.string.okay)
 
-    // TODO: Don't show error message again after rotation
     LaunchedEffect(data.nonCriticalError) {
         if (!nonCriticalErrorMsg.isNullOrEmpty()) {
             snackbarHostState.showSnackBarSafe(

@@ -66,7 +66,6 @@ class AudioPlaybackService: MediaSessionService() {
         const val NOTIFICATION_CHANNEL_ID = "ua.headway.headwaytesttask.audio_playback"
 
         private const val RC_OPEN_PLAYER_ACTIVITY = 200
-        // TODO: Remove hardcode
         private const val PLAYER_ACTIVITY_CLASS_NAME = "ua.headway.headwaytesttask.presentation.ui.MainActivity"
     }
 }

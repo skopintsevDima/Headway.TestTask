@@ -13,7 +13,7 @@ sealed class UiState {
         val summaryParts: List<SummaryPart>,
         val bookCoverUrl: String,
         val currentPartIndex: Int,
-        val isPlayerReady: Boolean, // TODO: Adapt UI to react on player availability (one more UiState? Info?)
+        val isPlayerReady: Boolean,
         val isAudioPlaying: Boolean,
         val currentAudioPositionMs: Long,
         val currentAudioDurationMs: Long,
@@ -33,8 +33,7 @@ sealed class UiState {
     }
 
     sealed class Error(val errorMsg: String): UiState() {
-        // TODO: Remove hardcode
-        data object NoDataForPlayerError: Error("Goddamn! We have nothing to play for you 😔")
+        data object NoDataForPlayerError: Error("Goddamn! We have nothing to play for you 😔") // TODO: Remove hardcode
         data class LoadBookDataError(val loadDataErrorMsg: String): Error("We tried to load your book, but failed: $loadDataErrorMsg")
         data class PlayerInitError(val initErrorMsg: String): Error("Oops, player cannot be initialized: $initErrorMsg")
         data class PlaybackError(val playbackErrorMsg: String): Error("Player has left the chat: $playbackErrorMsg")

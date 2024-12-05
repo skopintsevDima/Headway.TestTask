@@ -11,7 +11,6 @@ class MemoryBookSource : BookSource {
     }
 
     companion object {
-        // TODO: Replace audio URLs for Book2/Book3 + Change text
         private val bookSummary1 = BookSummary(
             id = 1,
             summaryParts = listOf(

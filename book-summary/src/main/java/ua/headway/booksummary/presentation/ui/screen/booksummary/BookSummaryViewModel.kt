@@ -46,7 +46,7 @@ class BookSummaryViewModel @Inject constructor(
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Idle) // TODO: Fix concurrency
+    private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState: StateFlow<UiState> = _uiState
 
     private lateinit var playbackState: StateFlow<PlaybackState>

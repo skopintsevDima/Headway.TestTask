@@ -16,7 +16,6 @@ object LocalResources {
         val Refresh = R.drawable.ic_refresh
     }
 
-    // TODO: Replace R.strings everywhere
     object Strings {
         val NotificationChannelName = R.string.notification_channel_name
         val KeyPointTitle = R.string.key_point_title

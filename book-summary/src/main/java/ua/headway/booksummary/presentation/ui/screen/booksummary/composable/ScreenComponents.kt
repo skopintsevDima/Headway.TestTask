@@ -40,7 +40,6 @@ import coil.compose.rememberAsyncImagePainter
 import ua.headway.booksummary.R
 import ua.headway.booksummary.presentation.ui.resources.LocalResources
 
-// TODO: (EVERYWHERE) Remove all magic constants into Constants + texts to Strings
 @Composable
 fun TopBookCover(bookCoverUrl: String, modifier: Modifier = Modifier) {
     // TODO: Add placeholder image for: loading, error
