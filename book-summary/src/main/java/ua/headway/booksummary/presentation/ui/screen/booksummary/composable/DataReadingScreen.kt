@@ -60,6 +60,8 @@ fun DataReadingPortraitScreen(
     val scrollState = rememberScrollState()
     val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
     val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
+    val isFirstPartNow = remember(data) { data.isFirstPartNow }
+    val isLastPartNow = remember(data) { data.isLastPartNow }
 
     Column(
         modifier = Modifier
@@ -101,12 +103,15 @@ fun DataReadingPortraitScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            IconButton(onClick = onSkipBack) {
+            IconButton(
+                onClick = onSkipBack,
+                enabled = !isFirstPartNow
+            ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                     contentDescription = stringResource(LocalResources.Strings.SkipBack),
-                    tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                    tint = if (!isFirstPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                 )
             }
 
@@ -116,12 +121,15 @@ fun DataReadingPortraitScreen(
                 onTextModeClick = onTextModeClick
             )
 
-            IconButton(onClick = onSkipForward) {
+            IconButton(
+                onClick = onSkipForward,
+                enabled = !isLastPartNow
+            ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                     contentDescription = stringResource(LocalResources.Strings.SkipForward),
-                    tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                    tint = if (!isLastPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                 )
             }
         }
@@ -139,6 +147,8 @@ fun DataReadingLandscapeScreen(
     val scrollState = rememberScrollState()
     val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
     val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
+    val isFirstPartNow = remember(data) { data.isFirstPartNow }
+    val isLastPartNow = remember(data) { data.isLastPartNow }
 
     Row(
         modifier = Modifier
@@ -190,12 +200,15 @@ fun DataReadingLandscapeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = onSkipBack) {
+                IconButton(
+                    onClick = onSkipBack,
+                    enabled = !isFirstPartNow
+                ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                         contentDescription = stringResource(LocalResources.Strings.SkipBack),
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
+                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                        tint = if (!isFirstPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                     )
                 }
 
@@ -205,12 +218,15 @@ fun DataReadingLandscapeScreen(
                     onTextModeClick = onTextModeClick
                 )
 
-                IconButton(onClick = onSkipForward) {
+                IconButton(
+                    onClick = onSkipForward,
+                    enabled = !isLastPartNow
+                ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                         contentDescription = stringResource(LocalResources.Strings.SkipForward),
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium)
+                        modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                        tint = if (!isLastPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                     )
                 }
             }

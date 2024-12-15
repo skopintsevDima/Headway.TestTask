@@ -102,6 +102,7 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
 
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
+            isLastPartNow = data.isLastPartNow,
             onToggleAudio = onToggleAudio,
             onRewind = onRewind,
             onFastForward = onFastForward,
@@ -172,6 +173,7 @@ private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSumm
 
             PlaybackControls(
                 isAudioPlaying = data.isAudioPlaying,
+                isLastPartNow = data.isLastPartNow,
                 onToggleAudio = onToggleAudio,
                 onRewind = onRewind,
                 onFastForward = onFastForward,
@@ -289,6 +291,7 @@ private fun PlaybackSpeedToggle(
 @Composable
 private fun PlaybackControls(
     isAudioPlaying: Boolean,
+    isLastPartNow: Boolean,
     onToggleAudio: () -> Unit,
     onRewind: () -> Unit,
     onFastForward: () -> Unit,
@@ -338,12 +341,15 @@ private fun PlaybackControls(
             )
         }
 
-        IconButton(onClick = onSkipForward) {
+        IconButton(
+            onClick = onSkipForward,
+            enabled = !isLastPartNow
+        ) {
             Icon(
                 modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                 contentDescription = "Skip Forward",
-                tint = MaterialTheme.colors.secondary
+                tint = if (!isLastPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
             )
         }
     }

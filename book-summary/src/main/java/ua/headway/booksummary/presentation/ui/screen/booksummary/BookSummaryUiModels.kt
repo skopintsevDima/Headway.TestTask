@@ -28,6 +28,10 @@ sealed class UiState {
             get() = summaryParts[currentPartIndex]
         val partsTotal: Int
             get() = summaryParts.size
+        val isFirstPartNow: Boolean
+            get() = currentPartIndex == 0
+        val isLastPartNow: Boolean
+            get() = currentPartIndex == partsTotal - 1
 
         data class NonCriticalError(
             val id: Long,
