@@ -30,6 +30,7 @@ object LocalResources {
         val Retry = R.string.retry
         val Okay = R.string.okay
         val UnknownErrorMessage = R.string.unknown_error_message_to_user
+        val GlobalCrashMessage = R.string.global_crash_message_to_user
         val Speed = R.string.speed
         val SkipBack = R.string.content_description_skip_back
         val SkipForward = R.string.content_description_skip_forward

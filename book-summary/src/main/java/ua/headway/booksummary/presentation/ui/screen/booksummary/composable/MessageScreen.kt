@@ -3,6 +3,7 @@ package ua.headway.booksummary.presentation.ui.screen.booksummary.composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +17,8 @@ fun MessageScreen(message: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+            .background(MaterialTheme.colors.background)
+            .padding(LocalResources.Dimensions.Padding.Medium),
         contentAlignment = Alignment.Center
     ) {
         Text(

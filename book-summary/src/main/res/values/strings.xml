@@ -20,5 +20,6 @@
     <string name="error_unknown">Something unknown happened…but Trump will fix it…</string>
 
     <string name="unknown_error_message_to_user">We would recommend to clean and restart the app 🫶</string>
+    <string name="global_crash_message_to_user">Something unexpected happened 😱\n\nWe would recommend to clean and restart the app 🫶</string>
     <string name="permission_denied_error_message_to_user">Permission denied: we can\'t move forward 🥲</string>
 </resources>

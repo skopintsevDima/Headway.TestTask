@@ -19,7 +19,7 @@
         android:theme="@style/Theme.HeadwayTestTask"
         tools:targetApi="35">
         <activity
-            android:name=".presentation.ui.MainActivity"
+            android:name=".presentation.ui.activity.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.HeadwayTestTask">
@@ -29,6 +29,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.ui.activity.CrashActivity"
+            android:theme="@style/Theme.HeadwayTestTask"
+            android:launchMode="singleTop" />
 
         <service
             android:name="ua.headway.booksummary.presentation.audio.AudioPlaybackService"

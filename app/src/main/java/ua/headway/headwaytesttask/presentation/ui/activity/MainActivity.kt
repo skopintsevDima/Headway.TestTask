@@ -1,4 +1,4 @@
-package ua.headway.headwaytesttask.presentation.ui
+package ua.headway.headwaytesttask.presentation.ui.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
