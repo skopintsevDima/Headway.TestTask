@@ -1,22 +1,15 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary.composable
 
-import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,10 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
@@ -52,20 +45,10 @@ import ua.headway.booksummary.presentation.ui.util.formatTime
 @Composable
 fun DataListeningScreen(
     data: UiState.Data,
-    viewModel: BookSummaryViewModel
+    viewModel: BookSummaryViewModel,
+    modifier: Modifier,
+    modeTogglePadding: Dp
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-    if (isLandscape) {
-        DataListeningLandscapeScreen(data, viewModel)
-    } else {
-        DataListeningPortraitScreen(data, viewModel)
-    }
-}
-
-@Composable
-private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
     val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
     val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
@@ -78,18 +61,9 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
     val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colors.background)
-            .padding(WindowInsets.systemBars.asPaddingValues()),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBookCover(
-            data.bookCoverUrl,
-            modifier = Modifier.padding(top = LocalResources.Dimensions.Padding.XXXLarge)
-        )
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XXLarge))
-
         PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
         Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
@@ -130,83 +104,7 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
             onAudioModeClick = onAudioModeClick,
             onTextModeClick = onTextModeClick
         )
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait))
-    }
-}
-
-@Composable
-private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
-    val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
-    val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
-    val onPlaybackTimeChangeStarted = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.StartPlaybackPositionChange) } }
-    val onPlaybackTimeChangeFinished = remember(viewModel) { { position: Float -> viewModel.tryHandleIntent(UiIntent.FinishPlaybackPositionChange(position.toLong())) } }
-    val onRewind = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(REWIND_OFFSET_MILLIS.unaryMinus())) } }
-    val onFastForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ShiftAudioPosition(FAST_FORWARD_OFFSET_MILLIS)) } }
-    val onSkipBackward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoPreviousPart) } }
-    val onSkipForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoNextPart) } }
-    val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
-    val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colors.background)
-            .padding(WindowInsets.systemBars.asPaddingValues())
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
-                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
-        ) {
-            TopBookCover(bookCoverUrl = data.bookCoverUrl)
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(2f)
-                .fillMaxHeight()
-                .padding(horizontal = LocalResources.Dimensions.Padding.Medium),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
-
-            PartDescription(data.currentSummaryPart.description)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
-
-            PlaybackProgressBar(
-                playbackTimeMs = data.currentAudioPositionMs.toFloat(),
-                totalTimeMs = data.currentAudioDurationMs.toFloat(),
-                onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
-                onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
-            )
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
-
-            PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XLarge))
-
-            PlaybackControls(
-                isAudioPlaying = data.isAudioPlaying,
-                isLastPartNow = data.isLastPartNow,
-                isAudioToggleEnabled = data.isPlayerReady,
-                onToggleAudio = onToggleAudio,
-                onRewind = onRewind,
-                onFastForward = onFastForward,
-                onSkipBackward = onSkipBackward,
-                onSkipForward = onSkipForward
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            SummaryModeToggle(
-                isListeningModeEnabled = data.isListeningModeEnabled,
-                onAudioModeClick = onAudioModeClick,
-                onTextModeClick = onTextModeClick
-            )
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape))
-        }
+        Spacer(modifier = Modifier.height(modeTogglePadding))
     }
 }
 

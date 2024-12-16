@@ -1,16 +1,22 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -25,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -38,6 +45,7 @@ import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.Data
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.ErrorSnackBar
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.LoadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.MessageScreen
+import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.TopBookCover
 
 @Composable
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
@@ -179,18 +187,90 @@ private fun DataScreen(
         }
     }
 
-    if (data.isListeningModeEnabled) {
-        DataListeningScreen(data, viewModel)
-    } else {
-        val onSkipBack = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoPreviousPart) } }
-        val onSkipForward = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoNextPart) } }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-        DataReadingScreen(
-            data = data,
-            viewModel = viewModel,
-            onSkipBack = onSkipBack,
-            onSkipForward = onSkipForward
+    if (isLandscape) {
+        DataLandscapeScreen(data, viewModel)
+    } else {
+        DataPortraitScreen(data, viewModel)
+    }
+}
+
+@Composable
+private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.background)
+            .padding(WindowInsets.systemBars.asPaddingValues()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TopBookCover(
+            data.bookCoverUrl,
+            modifier = Modifier.padding(top = LocalResources.Dimensions.Padding.XXXLarge)
         )
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XXLarge))
+
+        if (data.isListeningModeEnabled) {
+            DataListeningScreen(
+                data,
+                viewModel,
+                Modifier.fillMaxSize(),
+                LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait
+            )
+        } else {
+            DataReadingScreen(
+                data,
+                viewModel,
+                Modifier.fillMaxSize(),
+                LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait
+            )
+        }
+    }
+}
+
+@Composable
+private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.background)
+            .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
+        ) {
+            TopBookCover(bookCoverUrl = data.bookCoverUrl)
+        }
+
+        if (data.isListeningModeEnabled) {
+            val modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
+            DataListeningScreen(
+                data,
+                viewModel,
+                modifier,
+                LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape
+            )
+        } else {
+            val modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
+            DataReadingScreen(
+                data,
+                viewModel,
+                modifier,
+                LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape
+            )
+        }
     }
 }
 
