@@ -47,7 +47,6 @@ fun TopBookCover(
         modifier = modifier
             .height(LocalResources.Dimensions.Image.Height)
             .width(LocalResources.Dimensions.Image.Width)
-            .padding(top = LocalResources.Dimensions.Padding.ExtraLarge)
     ) {
         val painter = rememberAsyncImagePainter(
             model = bookCoverUrl,
@@ -72,6 +71,7 @@ fun PartNumberTitle(partNumber: Int, partsTotal: Int) {
         style = MaterialTheme.typography.body1.copy(
             color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Medium,
+            fontSize = LocalResources.Dimensions.Text.SizeSmall,
             letterSpacing = LocalResources.Dimensions.Text.SpacingLarge
         )
     )

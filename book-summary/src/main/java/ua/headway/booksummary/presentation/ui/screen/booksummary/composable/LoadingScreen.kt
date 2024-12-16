@@ -47,6 +47,7 @@ private fun LoadingScreenPortrait() {
     ) {
         Box(
             modifier = Modifier
+                .padding(top = LocalResources.Dimensions.Padding.XXXLarge)
                 .height(LocalResources.Dimensions.Image.Height)
                 .width(LocalResources.Dimensions.Image.Width)
                 .placeholder(
@@ -55,7 +56,7 @@ private fun LoadingScreenPortrait() {
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
                 )
         )
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XLarge))
 
         Box(
             modifier = Modifier
@@ -95,7 +96,8 @@ private fun LoadingScreenLandscape() {
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = LocalResources.Dimensions.Padding.Medium)
+                .fillMaxHeight()
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
                 .height(LocalResources.Dimensions.Image.Height)
                 .placeholder(
                     visible = true,
@@ -193,7 +195,7 @@ private fun PlaybackShimmer() {
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
             )
     )
-    Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
+    Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XLarge))
 
     Row(
         modifier = Modifier

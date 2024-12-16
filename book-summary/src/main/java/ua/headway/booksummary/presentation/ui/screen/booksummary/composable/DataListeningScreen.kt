@@ -3,16 +3,20 @@ package ua.headway.booksummary.presentation.ui.screen.booksummary.composable
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,17 +81,20 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
-            .padding(LocalResources.Dimensions.Padding.Medium),
+            .padding(WindowInsets.systemBars.asPaddingValues()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBookCover(data.bookCoverUrl)
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
+        TopBookCover(
+            data.bookCoverUrl,
+            modifier = Modifier.padding(top = LocalResources.Dimensions.Padding.XXXLarge)
+        )
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XXLarge))
 
         PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
         Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         PartDescription(data.currentSummaryPart.description)
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         PlaybackProgressBar(
             playbackTimeMs = data.currentAudioPositionMs.toFloat(),
@@ -95,23 +102,28 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
             onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
             onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
         )
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
         PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
 
-        PlaybackControls(
-            isAudioPlaying = data.isAudioPlaying,
-            isLastPartNow = data.isLastPartNow,
-            isAudioToggleEnabled = data.isPlayerReady,
-            onToggleAudio = onToggleAudio,
-            onRewind = onRewind,
-            onFastForward = onFastForward,
-            onSkipBackward = onSkipBackward,
-            onSkipForward = onSkipForward
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = LocalResources.Dimensions.Padding.Large),
+            contentAlignment = Alignment.Center
+        ) {
+            PlaybackControls(
+                isAudioPlaying = data.isAudioPlaying,
+                isLastPartNow = data.isLastPartNow,
+                isAudioToggleEnabled = data.isPlayerReady,
+                onToggleAudio = onToggleAudio,
+                onRewind = onRewind,
+                onFastForward = onFastForward,
+                onSkipBackward = onSkipBackward,
+                onSkipForward = onSkipForward
+            )
+        }
 
         SummaryModeToggle(
             isListeningModeEnabled = data.isListeningModeEnabled,
@@ -139,27 +151,30 @@ private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSumm
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
-            .padding(LocalResources.Dimensions.Padding.Medium)
+            .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
-        TopBookCover(
-            bookCoverUrl = data.bookCoverUrl,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
+                .fillMaxHeight()
                 .weight(1f)
-                .padding(end = LocalResources.Dimensions.Padding.Medium)
-        )
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
+        ) {
+            TopBookCover(bookCoverUrl = data.bookCoverUrl)
+        }
 
         Column(
             modifier = Modifier
                 .weight(2f)
                 .fillMaxHeight()
-                .padding(start = LocalResources.Dimensions.Padding.Medium),
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
             Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             PartDescription(data.currentSummaryPart.description)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             PlaybackProgressBar(
                 playbackTimeMs = data.currentAudioPositionMs.toFloat(),
@@ -167,10 +182,10 @@ private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSumm
                 onPlaybackTimeChangeStarted = onPlaybackTimeChangeStarted,
                 onPlaybackTimeChangeFinished = onPlaybackTimeChangeFinished
             )
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Medium))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
 
             PlaybackSpeedToggle(data.audioSpeedLevel, onToggleAudioSpeed)
-            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.ExtraLarge))
+            Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XLarge))
 
             PlaybackControls(
                 isAudioPlaying = data.isAudioPlaying,
@@ -211,7 +226,9 @@ private fun PlaybackProgressBar(
     val sliderValue = remember(playbackTimeMs) { mutableFloatStateOf(playbackTimeMs) }
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = LocalResources.Dimensions.Padding.Medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

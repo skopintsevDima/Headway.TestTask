@@ -61,15 +61,17 @@ object LocalResources {
             val Small = 8.dp
             val Medium = 16.dp
             val Large = 24.dp
-            val ExtraLarge = 32.dp
+            val XLarge = 32.dp
+            val XXLarge = 40.dp
+            val XXXLarge = 54.dp
 
-            val SummaryToggleBottomPortrait = 48.dp
+            val SummaryToggleBottomPortrait = 22.dp
             val SummaryToggleBottomLandscape = 16.dp
         }
 
         object Image {
-            val Height = 350.dp
-            val Width = 250.dp
+            val Height = 320.dp
+            val Width = 220.dp
         }
 
         object Button {

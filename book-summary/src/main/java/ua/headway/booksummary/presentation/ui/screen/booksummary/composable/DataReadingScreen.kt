@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -67,11 +70,14 @@ fun DataReadingPortraitScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(LocalResources.Dimensions.Padding.Medium),
+            .padding(WindowInsets.systemBars.asPaddingValues()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBookCover(data.bookCoverUrl)
-        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Large))
+        TopBookCover(
+            data.bookCoverUrl,
+            modifier = Modifier.padding(top = LocalResources.Dimensions.Padding.XXXLarge)
+        )
+        Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.XXLarge))
 
         PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
         Spacer(modifier = Modifier.height(LocalResources.Dimensions.Padding.Small))
@@ -84,6 +90,7 @@ fun DataReadingPortraitScreen(
                 .weight(1f)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
         ) {
             Text(
                 text = data.currentSummaryPart.text,
@@ -101,7 +108,9 @@ fun DataReadingPortraitScreen(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
         ) {
             IconButton(
                 onClick = onSkipBack,
@@ -154,20 +163,23 @@ fun DataReadingLandscapeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(LocalResources.Dimensions.Padding.Medium)
+            .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
-        TopBookCover(
-            bookCoverUrl = data.bookCoverUrl,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
+                .fillMaxHeight()
                 .weight(1f)
-                .padding(end = LocalResources.Dimensions.Padding.Medium)
-        )
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
+        ) {
+            TopBookCover(bookCoverUrl = data.bookCoverUrl)
+        }
 
         Column(
             modifier = Modifier
                 .weight(2f)
                 .fillMaxHeight()
-                .padding(start = LocalResources.Dimensions.Padding.Medium),
+                .padding(horizontal = LocalResources.Dimensions.Padding.Medium),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartNumberTitle(data.currentPartIndex + 1, data.partsTotal)
