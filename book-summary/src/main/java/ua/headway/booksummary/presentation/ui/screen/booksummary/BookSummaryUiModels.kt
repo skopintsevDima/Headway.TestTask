@@ -107,6 +107,7 @@ sealed class PlaybackState {
     data object Idle: PlaybackState()
 
     data class Ready(
+        val isBuffering: Boolean,
         val isAudioPlaying: Boolean,
         val currentAudioIndex: Int,
         val currentAudioPositionMs: Long,

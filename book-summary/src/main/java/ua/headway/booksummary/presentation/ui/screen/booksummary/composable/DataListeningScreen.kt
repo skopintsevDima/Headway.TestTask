@@ -103,6 +103,7 @@ private fun DataListeningPortraitScreen(data: UiState.Data, viewModel: BookSumma
         PlaybackControls(
             isAudioPlaying = data.isAudioPlaying,
             isLastPartNow = data.isLastPartNow,
+            isAudioToggleEnabled = data.isPlayerReady,
             onToggleAudio = onToggleAudio,
             onRewind = onRewind,
             onFastForward = onFastForward,
@@ -174,6 +175,7 @@ private fun DataListeningLandscapeScreen(data: UiState.Data, viewModel: BookSumm
             PlaybackControls(
                 isAudioPlaying = data.isAudioPlaying,
                 isLastPartNow = data.isLastPartNow,
+                isAudioToggleEnabled = data.isPlayerReady,
                 onToggleAudio = onToggleAudio,
                 onRewind = onRewind,
                 onFastForward = onFastForward,
@@ -292,6 +294,7 @@ private fun PlaybackSpeedToggle(
 private fun PlaybackControls(
     isAudioPlaying: Boolean,
     isLastPartNow: Boolean,
+    isAudioToggleEnabled: Boolean,
     onToggleAudio: () -> Unit,
     onRewind: () -> Unit,
     onFastForward: () -> Unit,
@@ -321,7 +324,10 @@ private fun PlaybackControls(
             )
         }
 
-        IconButton(onClick = onToggleAudio) {
+        IconButton(
+            onClick = onToggleAudio,
+            enabled = isAudioToggleEnabled
+        ) {
             Icon(
                 modifier = Modifier.size(LocalResources.Dimensions.Icon.Large),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Pause.takeIf {

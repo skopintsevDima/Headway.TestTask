@@ -30,6 +30,8 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     private var syncPlaybackPositionJob: Job? = null
     private var coroutineScope: CoroutineScope? = null
 
+    private var isBuffering: Boolean = false
+
     override val isPlayerAvailable: Boolean
         get() = audioPlayer != null
 
@@ -50,8 +52,12 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
         return _playbackState.combine(_playbackPositionState) { playbackState, playbackPosition ->
             withContext(Dispatchers.Main) {
                 if (playbackState is PlaybackState.Ready){
+                    val isAudioPlaying = audioPlayer?.isPlaying?.takeIf { !isBuffering }
+                        ?: playbackState.isAudioPlaying
+
                     PlaybackState.Ready(
-                        isAudioPlaying = audioPlayer?.isPlaying ?: playbackState.isAudioPlaying,
+                        isBuffering = isBuffering,
+                        isAudioPlaying = isAudioPlaying,
                         currentAudioIndex = audioPlayer?.currentMediaItemIndex ?: playbackState.currentAudioIndex,
                         currentAudioPositionMs = playbackPosition,
                         currentAudioDurationMs = audioPlayer?.duration ?: playbackState.currentAudioDurationMs,
@@ -131,8 +137,10 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
         override fun onPlaybackStateChanged(state: Int) {
             when (state) {
                 Player.STATE_READY -> {
+                    isBuffering = false
                     val currentPlaybackState = _playbackState.value.asReady
                     val newPlaybackState = currentPlaybackState ?: PlaybackState.Ready(
+                        isBuffering = isBuffering,
                         isAudioPlaying = audioPlayer?.isPlaying ?: false,
                         currentAudioIndex = audioPlayer?.currentMediaItemIndex ?: 0,
                         currentAudioPositionMs = audioPlayer?.currentPosition ?: 0,
@@ -142,6 +150,9 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                     startPlayerSyncer()
                 }
                 else -> {
+                    if (state == Player.STATE_BUFFERING) {
+                        isBuffering = true
+                    }
                     updatePlaybackState(newPlaybackState = PlaybackState.Idle)
                     stopPlayerSyncer()
                 }
@@ -151,7 +162,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             val currentPlaybackState = _playbackState.value.asReady
-            if (currentPlaybackState != null) {
+            if (currentPlaybackState != null && !isBuffering) {
                 updatePlaybackState(newPlaybackState = currentPlaybackState.copy(isAudioPlaying = isPlaying))
             }
             super.onIsPlayingChanged(isPlaying)

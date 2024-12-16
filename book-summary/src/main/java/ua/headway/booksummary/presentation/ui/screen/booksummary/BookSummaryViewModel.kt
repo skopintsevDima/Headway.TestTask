@@ -187,7 +187,7 @@ class BookSummaryViewModel @Inject constructor(
                             _uiState.value,
                             UiResult.Success.PlaybackStateUpdated(
                                 isPlayerReady = false,
-                                isAudioPlaying = false,
+                                isAudioPlaying = currentState.isAudioPlaying,
                                 newAudioIndex = currentState.currentPartIndex,
                                 newAudioPositionMs = currentState.currentAudioPositionMs,
                                 newAudioDurationMs = currentState.currentAudioDurationMs
@@ -198,7 +198,7 @@ class BookSummaryViewModel @Inject constructor(
                         _uiState.value = reduce(
                             _uiState.value,
                             UiResult.Success.PlaybackStateUpdated(
-                                isPlayerReady = currentState.isPlayerReady,
+                                isPlayerReady = !newPlaybackState.isBuffering,
                                 isAudioPlaying = newPlaybackState.isAudioPlaying,
                                 newAudioIndex = newPlaybackState.currentAudioIndex,
                                 newAudioPositionMs = newPlaybackState.currentAudioPositionMs,
