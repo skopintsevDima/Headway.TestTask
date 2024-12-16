@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-ui"))
+    implementation(project(":common-ui"))
     implementation(project(":book-summary"))
 
     implementation(platform(libs.androidx.compose.bom))

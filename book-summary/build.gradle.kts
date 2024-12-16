@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-ui"))
+    implementation(project(":common-ui"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.session)

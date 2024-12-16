@@ -22,4 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Headway TestTask"
 include(":app")
 include(":book-summary")
-include(":core-ui")
+include(":common-ui")
