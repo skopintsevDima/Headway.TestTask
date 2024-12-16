@@ -60,6 +60,11 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.squareup.moshi.codegen)
 
-    testImplementation(libs.androidx.junit)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.jetbrains.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.arch.core.testing)
+
+    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

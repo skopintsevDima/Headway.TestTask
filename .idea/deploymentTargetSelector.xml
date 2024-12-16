@@ -4,17 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-16T14:55:06.762288Z">
+        <DropdownSelection timestamp="2024-12-16T14:57:45.896483Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/dmytro.skopintsev/.android/avd/Pixel_3a_API_32_arm64-v8a.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CRA2F7XBN" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="ErrorPreview - Portrait Dark (error 1)">
-        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

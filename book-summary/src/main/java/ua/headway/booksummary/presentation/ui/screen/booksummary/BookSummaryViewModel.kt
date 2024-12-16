@@ -120,9 +120,7 @@ open class BookSummaryViewModel @Inject constructor(
             }
 
             is UiIntent.FinishPlaybackPositionChange -> {
-                val currentState = _uiState.value.asData ?: return
                 val newAudioPositionMs = intent.newAudioPositionMs
-                    .coerceIn(0, currentState.currentAudioDurationMs)
                 audioPlaybackInteractor.interactSafe(ERROR_PLAYER_SEEK_FAILED) {
                     seekTo(newAudioPositionMs)
                     isAudioPositionChangeInProgress = false
@@ -132,7 +130,6 @@ open class BookSummaryViewModel @Inject constructor(
             is UiIntent.ShiftAudioPosition -> {
                 val currentState = _uiState.value.asData ?: return
                 val newAudioPositionMs = (currentState.currentAudioPositionMs + intent.offsetMs)
-                    .coerceIn(0, currentState.currentAudioDurationMs)
                 audioPlaybackInteractor.interactSafe(ERROR_PLAYER_SEEK_FAILED) {
                     seekTo(newAudioPositionMs)
                 }

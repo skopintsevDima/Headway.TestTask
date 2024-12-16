@@ -22,7 +22,9 @@ object Constants {
         object BookSummary {
             const val TAG = "BookSummary"
 
-            const val AUDIO_SPEED_LEVEL_DEFAULT = 1f
+            const val AUDIO_SPEED_LEVEL_MINIMUM = 1f
+            const val AUDIO_SPEED_LEVEL_MAXIMUM = 2f
+            const val AUDIO_SPEED_LEVEL_DEFAULT = AUDIO_SPEED_LEVEL_MINIMUM
             const val REWIND_OFFSET_MILLIS = 5 * 1000L
             const val FAST_FORWARD_OFFSET_MILLIS = 10 * 1000L
             const val DELAY_PLAYER_SYNC_MILLIS = 50L

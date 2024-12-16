@@ -16,10 +16,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
+import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_SPEED_LEVEL_MAXIMUM
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_SPEED_LEVEL_MINIMUM
 import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.DELAY_PLAYER_SYNC_MILLIS
-import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
 class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     private var audioPlayer: MediaController? = null
@@ -68,20 +70,31 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     }
 
     override fun togglePlayback(play: Boolean) {
-        if (play && audioPlayer?.isPlaying == false) {
-            audioPlayer?.play()
-        } else {
-            audioPlayer?.pause()
+        audioPlayer?.run {
+            if (play) {
+                if (!isPlaying) {
+                    play()
+                }
+            } else {
+                if (isPlaying) {
+                    pause()
+                }
+            }
         }
     }
 
     override fun seekTo(positionMs: Long) {
-        audioPlayer?.seekTo(positionMs)
+        val newPositionsMs = positionMs.coerceIn(0, audioPlayer?.duration)
+        audioPlayer?.seekTo(newPositionsMs)
         syncPlayer()
     }
 
     override fun changeSpeed(speedLevel: Float) {
-        audioPlayer?.setPlaybackSpeed(speedLevel)
+        speedLevel.takeIf {
+            it in AUDIO_SPEED_LEVEL_MINIMUM..AUDIO_SPEED_LEVEL_MAXIMUM
+        }?.let { newSpeedLevel ->
+            audioPlayer?.setPlaybackSpeed(newSpeedLevel)
+        }
     }
 
     override fun skipForward() {
@@ -170,6 +183,9 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             super.onMediaItemTransition(mediaItem, reason)
+
+            if (mediaItem == null) return
+
             audioPlayer?.run {
                 val currentPlaybackState = _playbackState.value.asReady
                 val newAudioDurationMs = this.duration
