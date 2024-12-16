@@ -89,7 +89,7 @@ fun DataReadingScreen(
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                     contentDescription = stringResource(LocalResources.Strings.SkipBack),
-                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Large),
                     tint = if (!isFirstPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                 )
             }
@@ -107,7 +107,7 @@ fun DataReadingScreen(
                 Icon(
                     imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                     contentDescription = stringResource(LocalResources.Strings.SkipForward),
-                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                    modifier = Modifier.size(LocalResources.Dimensions.Icon.Large),
                     tint = if (!isLastPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)
                 )
             }

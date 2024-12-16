@@ -47,7 +47,8 @@ fun DataListeningScreen(
     data: UiState.Data,
     viewModel: BookSummaryViewModel,
     modifier: Modifier,
-    modeTogglePadding: Dp
+    modeTogglePadding: Dp,
+    playbackIconSize: Dp
 ) {
     val onToggleAudioSpeed = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed) } }
     val onToggleAudio = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleAudio) } }
@@ -91,6 +92,7 @@ fun DataListeningScreen(
                 isAudioPlaying = data.isAudioPlaying,
                 isLastPartNow = data.isLastPartNow,
                 isAudioToggleEnabled = data.isPlayerReady,
+                playbackIconSize = playbackIconSize,
                 onToggleAudio = onToggleAudio,
                 onRewind = onRewind,
                 onFastForward = onFastForward,
@@ -210,6 +212,7 @@ private fun PlaybackControls(
     isAudioPlaying: Boolean,
     isLastPartNow: Boolean,
     isAudioToggleEnabled: Boolean,
+    playbackIconSize: Dp,
     onToggleAudio: () -> Unit,
     onRewind: () -> Unit,
     onFastForward: () -> Unit,
@@ -223,7 +226,7 @@ private fun PlaybackControls(
     ) {
         IconButton(onClick = onSkipBackward) {
             Icon(
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                modifier = Modifier.size(playbackIconSize),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipBack),
                 contentDescription = "Skip Back",
                 tint = MaterialTheme.colors.secondary
@@ -232,7 +235,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onRewind) {
             Icon(
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                modifier = Modifier.size(playbackIconSize),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Rewind5),
                 contentDescription = "Rewind 5 seconds",
                 tint = MaterialTheme.colors.secondary
@@ -244,7 +247,7 @@ private fun PlaybackControls(
             enabled = isAudioToggleEnabled
         ) {
             Icon(
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.Large),
+                modifier = Modifier.size(playbackIconSize),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Pause.takeIf {
                     isAudioPlaying
                 } ?: LocalResources.Icons.Play),
@@ -255,7 +258,7 @@ private fun PlaybackControls(
 
         IconButton(onClick = onFastForward) {
             Icon(
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                modifier = Modifier.size(playbackIconSize),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.Forward10),
                 contentDescription = "Fast Forward 10 Seconds",
                 tint = MaterialTheme.colors.secondary
@@ -267,7 +270,7 @@ private fun PlaybackControls(
             enabled = !isLastPartNow
         ) {
             Icon(
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.Medium),
+                modifier = Modifier.size(playbackIconSize),
                 imageVector = ImageVector.vectorResource(LocalResources.Icons.SkipForward),
                 contentDescription = "Skip Forward",
                 tint = if (!isLastPartNow) MaterialTheme.colors.secondary else MaterialTheme.colors.secondary.copy(alpha = 0.4f)

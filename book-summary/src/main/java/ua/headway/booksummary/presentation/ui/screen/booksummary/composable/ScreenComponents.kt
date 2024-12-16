@@ -47,6 +47,7 @@ fun TopBookCover(
         modifier = modifier
             .height(LocalResources.Dimensions.Image.Height)
             .width(LocalResources.Dimensions.Image.Width)
+            .clip(RoundedCornerShape(LocalResources.Dimensions.Image.CornerRadius))
     ) {
         val painter = rememberAsyncImagePainter(
             model = bookCoverUrl,

@@ -152,12 +152,12 @@ private fun PlaybackShimmer() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(LocalResources.Dimensions.Icon.Small),
+            .height(LocalResources.Dimensions.Icon.Medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(LocalResources.Dimensions.Icon.Small, LocalResources.Dimensions.Text.HeightSmall)
+                .size(LocalResources.Dimensions.Icon.Medium, LocalResources.Dimensions.Text.HeightSmall)
                 .placeholder(
                     visible = true,
                     highlight = PlaceholderHighlight.shimmer(),
@@ -178,7 +178,7 @@ private fun PlaybackShimmer() {
         Spacer(modifier = Modifier.width(LocalResources.Dimensions.Padding.Small))
         Box(
             modifier = Modifier
-                .size(LocalResources.Dimensions.Icon.Small, LocalResources.Dimensions.Text.HeightSmall)
+                .size(LocalResources.Dimensions.Icon.Medium, LocalResources.Dimensions.Text.HeightSmall)
                 .placeholder(
                     visible = true,
                     highlight = PlaceholderHighlight.shimmer(),
@@ -209,7 +209,7 @@ private fun PlaybackShimmer() {
         repeat(5) {
             Box(
                 modifier = Modifier
-                    .size(LocalResources.Dimensions.Icon.Medium)
+                    .size(LocalResources.Dimensions.Icon.Large)
                     .placeholder(
                         visible = true,
                         highlight = PlaceholderHighlight.shimmer(),

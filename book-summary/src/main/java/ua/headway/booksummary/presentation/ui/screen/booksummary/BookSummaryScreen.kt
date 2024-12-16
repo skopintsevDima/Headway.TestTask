@@ -217,17 +217,18 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
 
         if (data.isListeningModeEnabled) {
             DataListeningScreen(
-                data,
-                viewModel,
-                Modifier.fillMaxSize(),
-                LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait
+                data = data,
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                modeTogglePadding = LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait,
+                playbackIconSize = LocalResources.Dimensions.Icon.Medium
             )
         } else {
             DataReadingScreen(
-                data,
-                viewModel,
-                Modifier.fillMaxSize(),
-                LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait
+                data = data,
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                modeTogglePadding = LocalResources.Dimensions.Padding.SummaryToggleBottomPortrait
             )
         }
     }
@@ -257,10 +258,11 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
                 .fillMaxHeight()
                 .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
             DataListeningScreen(
-                data,
-                viewModel,
-                modifier,
-                LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape
+                data = data,
+                viewModel = viewModel,
+                modifier = modifier,
+                modeTogglePadding = LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape,
+                playbackIconSize = LocalResources.Dimensions.Icon.Large
             )
         } else {
             val modifier = Modifier
@@ -268,10 +270,10 @@ private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewMo
                 .fillMaxHeight()
                 .padding(horizontal = LocalResources.Dimensions.Padding.Medium)
             DataReadingScreen(
-                data,
-                viewModel,
-                modifier,
-                LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape
+                data = data,
+                viewModel = viewModel,
+                modifier = modifier,
+                modeTogglePadding = LocalResources.Dimensions.Padding.SummaryToggleBottomLandscape
             )
         }
     }
