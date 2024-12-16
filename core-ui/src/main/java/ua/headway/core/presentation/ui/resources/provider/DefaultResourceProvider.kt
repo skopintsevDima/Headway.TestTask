@@ -1,4 +1,4 @@
-package ua.headway.booksummary.presentation.ui.resources.provider
+package ua.headway.core.presentation.ui.resources.provider
 
 import android.content.Context
 import androidx.annotation.StringRes

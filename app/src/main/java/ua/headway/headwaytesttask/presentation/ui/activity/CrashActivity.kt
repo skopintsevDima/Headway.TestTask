@@ -7,9 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.res.stringResource
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.MessageScreen
-import ua.headway.headwaytesttask.presentation.ui.theme.HeadwayTestTaskTheme
+import ua.headway.core.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.theme.HeadwayTestTaskTheme
 
 class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

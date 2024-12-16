@@ -1,11 +1,11 @@
-package ua.headway.headwaytesttask.presentation.ui.theme
+package ua.headway.core.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 
 private val DarkColorPalette = darkColors(
     primary = LocalResources.Colors.Blue,

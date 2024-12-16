@@ -36,7 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.rememberAsyncImagePainter
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 
 @Composable
 fun TopBookCover(

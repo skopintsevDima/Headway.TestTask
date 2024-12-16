@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.util.Log
 import dagger.hilt.android.HiltAndroidApp
 import ua.headway.booksummary.presentation.audio.AudioPlaybackService
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 import ua.headway.headwaytesttask.presentation.ui.activity.CrashActivity
 import kotlin.system.exitProcess
 

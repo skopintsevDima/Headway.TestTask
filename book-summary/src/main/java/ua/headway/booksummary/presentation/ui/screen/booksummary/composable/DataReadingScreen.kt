@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryViewModel
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiIntent
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "ua.headway.booksummary"
+    namespace = "ua.headway.core"
     compileSdk = 35
 
     defaultConfig {
@@ -33,33 +33,20 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    sourceSets {
-        getByName("main") {
-            res {
-                srcDirs("src/main/res")
-            }
-        }
-    }
 }
 
 dependencies {
-    implementation(project(":core-ui"))
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.google.accompanist.placeholder.material)
-    implementation(libs.squareup.moshi)
-    implementation(libs.squareup.moshi.kotlin)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.core.ktx)
+    api(libs.androidx.lifecycle.runtime.ktx)
+    api(libs.androidx.ui)
+    api(libs.androidx.ui.graphics)
+    api(libs.androidx.ui.tooling.preview)
+    api(libs.androidx.material)
 
     implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
 
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.squareup.moshi.codegen)
-
-    testImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    debugApi(libs.androidx.ui.tooling)
+    debugApi(libs.androidx.ui.test.manifest)
 }

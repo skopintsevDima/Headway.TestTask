@@ -8,7 +8,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import dagger.hilt.android.AndroidEntryPoint
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 import javax.inject.Inject
 
 @SuppressLint("UnsafeOptInUsageError")

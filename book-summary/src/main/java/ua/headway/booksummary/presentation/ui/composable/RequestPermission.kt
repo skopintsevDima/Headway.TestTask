@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import ua.headway.booksummary.R
+import ua.headway.core.presentation.ui.resources.LocalResources
 
 @Composable
 fun RequestPermission(permission: String, onPermissionGranted: () -> Unit) {
@@ -21,7 +21,7 @@ fun RequestPermission(permission: String, onPermissionGranted: () -> Unit) {
             } else {
                 Toast.makeText(
                     context,
-                    R.string.permission_denied_error_message_to_user,
+                    LocalResources.Strings.PermissionDeniedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }

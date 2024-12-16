@@ -1,4 +1,4 @@
-package ua.headway.headwaytesttask.presentation.ui.theme
+package ua.headway.core.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -21,29 +21,29 @@ import kotlinx.coroutines.plus
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.domain.usecase.GetBookSummaryUseCase
 import ua.headway.booksummary.presentation.audio.AudioPlaybackService
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_LOAD_BOOK_DATA
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_INIT
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SEEK_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SKIP_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SPEED_CHANGE_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TOGGLE_FAILED
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_UNKNOWN
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
-import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState.Data.NonCriticalError
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_LOAD_BOOK_DATA
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_INIT
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SEEK_FAILED
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SKIP_FAILED
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_SPEED_CHANGE_FAILED
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TOGGLE_FAILED
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_UNKNOWN
+import ua.headway.booksummary.presentation.util.Constants.UI
+import ua.headway.core.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 import javax.inject.Inject
 
 @HiltViewModel
-class BookSummaryViewModel @Inject constructor(
+open class BookSummaryViewModel @Inject constructor(
     private val getBookSummaryUseCase: GetBookSummaryUseCase,
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
-    private val resourceProvider: ResourceProvider,
+    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
-    val uiState: StateFlow<UiState> = _uiState
+    open val uiState: StateFlow<UiState> = _uiState
 
     private lateinit var playbackState: StateFlow<PlaybackState>
 

@@ -34,9 +34,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.FAST_FORWARD_OFFSET_MILLIS
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.REWIND_OFFSET_MILLIS
+import ua.headway.core.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryViewModel
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiIntent
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState

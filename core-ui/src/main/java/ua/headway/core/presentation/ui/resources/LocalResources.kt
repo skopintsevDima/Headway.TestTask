@@ -1,9 +1,10 @@
-package ua.headway.booksummary.presentation.ui.resources
+package ua.headway.core.presentation.ui.resources
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ua.headway.booksummary.R
+import ua.headway.core.R
 
 object LocalResources {
     object Icons {
@@ -31,6 +32,7 @@ object LocalResources {
         val Okay = R.string.okay
         val UnknownErrorMessage = R.string.unknown_error_message_to_user
         val GlobalCrashMessage = R.string.global_crash_message_to_user
+        val PermissionDeniedMessage = R.string.permission_denied_error_message_to_user
         val Speed = R.string.speed
         val SkipBack = R.string.content_description_skip_back
         val SkipForward = R.string.content_description_skip_forward
@@ -47,12 +49,19 @@ object LocalResources {
     }
 
     object Colors {
+        @Stable
         val Black = Color.Black
+        @Stable
         val White = Color.White
+        @Stable
         val Gray = Color.Gray
+        @Stable
         val DarkGray = Color.DarkGray
+        @Stable
         val LightGray = Color(0xFFF2EBE8)
+        @Stable
         val MilkWhite = Color(0xFFF8F5F1)
+        @Stable
         val Blue = Color(0xFF0066FF)
     }
 
@@ -105,8 +114,8 @@ object LocalResources {
             val ButtonCornerRadius = 8.dp
 
             object FillWidth {
-                val Half = 0.5f
-                val Large = 0.8f
+                const val HALF = 0.5f
+                const val LARGE = 0.8f
             }
         }
     }

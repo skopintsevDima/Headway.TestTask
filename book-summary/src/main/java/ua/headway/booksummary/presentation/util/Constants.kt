@@ -1,4 +1,4 @@
-package ua.headway.booksummary.presentation.ui.resources
+package ua.headway.booksummary.presentation.util
 
 import androidx.media3.common.Player
 

@@ -17,12 +17,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ua.headway.booksummary.presentation.ui.resources.Constants
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.AUDIO_CACHE_DIR_NAME
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_CACHE_SIZE_MB
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_HANDLE_FOCUS
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_PLAY_WHEN_READY
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_REPEAT_MODE
+import ua.headway.booksummary.presentation.util.Constants
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_CACHE_DIR_NAME
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.PLAYER_CACHE_SIZE_MB
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.PLAYER_HANDLE_FOCUS
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.PLAYER_PLAY_WHEN_READY
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.PLAYER_REPEAT_MODE
 import java.io.File
 import javax.inject.Singleton
 

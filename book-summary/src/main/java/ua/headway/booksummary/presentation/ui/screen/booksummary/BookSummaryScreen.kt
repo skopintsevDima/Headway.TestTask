@@ -36,16 +36,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import ua.headway.booksummary.presentation.ui.composable.RequestPermission
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.DataListeningScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.DataReadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.ErrorSnackBar
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.LoadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.MessageScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.TopBookCover
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary
+import ua.headway.core.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.theme.HeadwayTestTaskTheme
+import ua.headway.core.presentation.ui.util.PreviewLightDarkBothOrientations
 
 @Composable
 fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
@@ -282,5 +285,44 @@ suspend fun SnackbarHostState.showSnackBarSafe(
         this.showSnackbar(message, actionLabel)
     } catch (e: Throwable) {
         Log.e(BookSummary.TAG, "Failed to show SnackBar: ${e.stackTraceToString()}")
+    }
+}
+
+@PreviewLightDarkBothOrientations
+@Composable
+private fun IdlePreview() {
+    BookSummaryScreenPreviewWrapper(MockUiState.Idle)
+}
+
+@PreviewLightDarkBothOrientations
+@Composable
+private fun LoadingPreview() {
+    BookSummaryScreenPreviewWrapper(MockUiState.Loading)
+}
+
+@PreviewLightDarkBothOrientations
+@Composable
+private fun ErrorPreview(
+    @PreviewParameter(ErrorStatePreviewProvider::class) error: UiState.Error
+) {
+    BookSummaryScreenPreviewWrapper(error)
+}
+
+@PreviewLightDarkBothOrientations
+@Composable
+private fun DataPreview(
+    @PreviewParameter(DataStatePreviewProvider::class) data: UiState.Data
+) {
+    BookSummaryScreenPreviewWrapper(data)
+}
+
+@Composable
+private fun BookSummaryScreenPreviewWrapper(
+    uiState: UiState
+) {
+    HeadwayTestTaskTheme {
+        BookSummaryScreen(
+            viewModel = MockBookSummaryViewModelWithState(uiState)
+        )
     }
 }

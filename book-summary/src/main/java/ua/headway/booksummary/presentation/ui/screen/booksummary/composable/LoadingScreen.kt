@@ -3,6 +3,7 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary.composable
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.LocalResources
 
 @Composable
 fun LoadingScreen() {
@@ -42,6 +43,7 @@ private fun LoadingScreenPortrait() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colors.background)
             .padding(LocalResources.Dimensions.Padding.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -60,7 +62,7 @@ private fun LoadingScreenPortrait() {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.Half)
+                .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.HALF)
                 .height(LocalResources.Dimensions.Text.HeightSmall)
                 .placeholder(
                     visible = true,
@@ -72,7 +74,7 @@ private fun LoadingScreenPortrait() {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.Large)
+                .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.LARGE)
                 .height(LocalResources.Dimensions.Text.HeightMedium)
                 .placeholder(
                     visible = true,
@@ -91,6 +93,7 @@ private fun LoadingScreenLandscape() {
     Row(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colors.background)
             .padding(LocalResources.Dimensions.Padding.Medium)
     ) {
         Box(
@@ -115,7 +118,7 @@ private fun LoadingScreenLandscape() {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.Half)
+                    .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.HALF)
                     .height(LocalResources.Dimensions.Text.HeightSmall)
                     .placeholder(
                         visible = true,
@@ -127,7 +130,7 @@ private fun LoadingScreenLandscape() {
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.Large)
+                    .fillMaxWidth(LocalResources.Dimensions.Size.FillWidth.LARGE)
                     .height(LocalResources.Dimensions.Text.HeightMedium)
                     .placeholder(
                         visible = true,

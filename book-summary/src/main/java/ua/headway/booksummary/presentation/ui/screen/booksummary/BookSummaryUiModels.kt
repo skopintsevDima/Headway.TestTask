@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.compose.runtime.Stable
 import ua.headway.booksummary.domain.model.BookSummaryModel
 import ua.headway.booksummary.domain.model.BookSummaryModel.SummaryPart
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes
-import ua.headway.booksummary.presentation.ui.resources.LocalResources
-import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes
+import ua.headway.core.presentation.ui.resources.LocalResources
+import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 
 sealed class UiState {
     data object Idle: UiState()

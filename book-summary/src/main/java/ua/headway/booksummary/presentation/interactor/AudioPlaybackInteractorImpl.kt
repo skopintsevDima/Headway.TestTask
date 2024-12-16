@@ -16,9 +16,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
-import ua.headway.booksummary.presentation.ui.resources.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.DELAY_PLAYER_SYNC_MILLIS
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
+import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.DELAY_PLAYER_SYNC_MILLIS
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 
 class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {

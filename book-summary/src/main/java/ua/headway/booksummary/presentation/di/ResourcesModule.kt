@@ -6,8 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ua.headway.booksummary.presentation.ui.resources.provider.DefaultResourceProvider
-import ua.headway.booksummary.presentation.ui.resources.provider.ResourceProvider
+import ua.headway.core.presentation.ui.resources.provider.DefaultResourceProvider
+import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 
 @Module
 @InstallIn(SingletonComponent::class)

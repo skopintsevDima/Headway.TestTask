@@ -1,7 +1,7 @@
 package ua.headway.booksummary.presentation.ui.util
 
 import androidx.compose.ui.text.intl.Locale
-import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.FORMAT_PLAYBACK_TIME
 
 fun formatTime(milliseconds: Float): String {
     val minutes = (milliseconds / 60000).toInt()
