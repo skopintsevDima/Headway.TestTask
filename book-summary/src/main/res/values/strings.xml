@@ -19,6 +19,6 @@
     <string name="error_player_skip_failed">Nah, let\'s keep this one ☝️</string>
     <string name="error_unknown">Something unknown happened…but Trump will fix it…</string>
 
-    <string name="unknown_error_message_to_user">We would recommend to restart the app 🫶</string>
+    <string name="unknown_error_message_to_user">We would recommend to clean and restart the app 🫶</string>
     <string name="permission_denied_error_message_to_user">Permission denied: we can\'t move forward 🥲</string>
 </resources>

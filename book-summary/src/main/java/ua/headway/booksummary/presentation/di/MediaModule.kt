@@ -24,11 +24,13 @@ import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_PLAY_WHEN_READY
 import ua.headway.booksummary.presentation.ui.resources.Constants.UI.BookSummary.PLAYER_REPEAT_MODE
 import java.io.File
+import javax.inject.Singleton
 
 @SuppressLint("UnsafeOptInUsageError")
 @Module
 @InstallIn(SingletonComponent::class)
 class MediaModule {
+    @Singleton
     @Provides
     fun provideAudioCache(
         @ApplicationContext context: Context
