@@ -31,17 +31,22 @@ import ua.headway.core.presentation.ui.resources.LocalResources
 import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 import javax.inject.Inject
 
+interface BookSummaryViewModel {
+    val uiState: StateFlow<UiState>
+    fun tryHandleIntent(intent: UiIntent)
+}
+
 @HiltViewModel
-open class BookSummaryViewModel @Inject constructor(
+class BookSummaryViewModelImpl @Inject constructor(
     private val getBookSummaryUseCase: GetBookSummaryUseCase,
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
     private val playerSetupManager: PlayerSetupManager,
     private val uiStateMapper: BookSummaryUiStateMapper,
     private val resourceProvider: ResourceProvider,
     private val backgroundOpsDispatcher: CoroutineDispatcher,
-) : ViewModel() {
+) : ViewModel(), BookSummaryViewModel {
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
-    open val uiState: StateFlow<UiState> = _uiState
+    override val uiState: StateFlow<UiState> = _uiState
 
     private lateinit var playbackState: StateFlow<PlaybackState>
 
@@ -58,7 +63,7 @@ open class BookSummaryViewModel @Inject constructor(
         }
     }
 
-    fun tryHandleIntent(intent: UiIntent) {
+    override fun tryHandleIntent(intent: UiIntent) {
         try {
             handleIntent(intent)
         } catch (e: Throwable) {

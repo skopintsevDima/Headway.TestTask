@@ -51,7 +51,7 @@ import ua.headway.core.presentation.ui.theme.HeadwayTestTaskTheme
 import ua.headway.core.presentation.ui.util.PreviewLightDarkBothOrientations
 
 @Composable
-fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel()) {
+fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel<BookSummaryViewModelImpl>()) {
     InitWithPermissions(viewModel)
 
     val uiState = viewModel.uiState.collectAsState()
