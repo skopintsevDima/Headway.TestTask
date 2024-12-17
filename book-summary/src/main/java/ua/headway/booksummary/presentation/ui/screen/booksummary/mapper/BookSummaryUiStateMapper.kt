@@ -26,8 +26,9 @@ class DefaultBookSummaryUiStateMapper(
                 .setArtworkUri(Uri.parse(data.bookCoverUrl))
                 .build()
 
+            val audioUri = Uri.parse(summaryPart.audioUrl)
             MediaItem.Builder()
-                .setUri(summaryPart.audioUrl)
+                .setUri(audioUri)
                 .setMediaMetadata(metadata)
                 .build()
         }

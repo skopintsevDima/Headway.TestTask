@@ -214,7 +214,8 @@ open class BookSummaryViewModel @Inject constructor(
     }
 
     private fun getPlayerAudioItems(data: UiState.Data): List<MediaItem> {
-        return uiStateMapper.toMediaItems(data)
+        val audioItems = uiStateMapper.toMediaItems(data)
+        return audioItems
     }
 
     private fun reduce(previousState: UiState, result: UiResult): UiState = when (result) {
