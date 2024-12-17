@@ -4,7 +4,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapNotNull
 import ua.headway.booksummary.data.di.source.DatabaseSource
 import ua.headway.booksummary.data.di.source.MemorySource
@@ -29,10 +31,17 @@ class BookRepositoryImpl(
     private val checkInternetUseCase: CheckInternetUseCase
 ): BookRepository {
     override fun getBookSummaryById(bookId: Long): Flow<BookSummaryModel> {
-        val currentBookSource = networkBookSource.takeIf { isNetworkAvailable() }
-            ?: memoryBookSource
         return flow {
-            emitAll(currentBookSource.getBooks())
+            val booksFromNetwork = networkBookSource.takeIf { isNetworkAvailable() }
+                ?.getBooks()
+                ?.firstOrNull()
+                ?: emptyList()
+
+            if (booksFromNetwork.isNotEmpty()) {
+                emitAll(flowOf(booksFromNetwork))
+            } else {
+                emitAll(memoryBookSource.getBooks())
+            }
         }.catch { throwable ->
             if (isNetworkError(throwable)) {
                 emitAll(memoryBookSource.getBooks())
