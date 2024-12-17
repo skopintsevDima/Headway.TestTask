@@ -1,17 +1,11 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
-import android.content.ComponentName
-import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
-import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,8 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.domain.usecase.GetBookSummaryUseCase
-import ua.headway.booksummary.presentation.audio.AudioPlaybackService
+import ua.headway.booksummary.presentation.manager.PlayerSetupManager
 import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState.Data.NonCriticalError
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mapper.BookSummaryUiStateMapper
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_LOAD_BOOK_DATA
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_NO_DATA_FOR_PLAYER
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_INIT
@@ -40,7 +35,10 @@ import javax.inject.Inject
 open class BookSummaryViewModel @Inject constructor(
     private val getBookSummaryUseCase: GetBookSummaryUseCase,
     private val audioPlaybackInteractor: AudioPlaybackInteractor,
-    private val resourceProvider: ResourceProvider
+    private val playerSetupManager: PlayerSetupManager,
+    private val uiStateMapper: BookSummaryUiStateMapper,
+    private val resourceProvider: ResourceProvider,
+    private val backgroundOpsDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     open val uiState: StateFlow<UiState> = _uiState
@@ -48,9 +46,6 @@ open class BookSummaryViewModel @Inject constructor(
     private lateinit var playbackState: StateFlow<PlaybackState>
 
     private var isAudioPositionChangeInProgress: Boolean = false
-
-    private val isPlayerAvailable: Boolean
-        get() = audioPlaybackInteractor.isPlayerAvailable
 
     init {
         viewModelScope.launch {
@@ -77,7 +72,7 @@ open class BookSummaryViewModel @Inject constructor(
     private fun handleIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.FetchBookSummary -> {
-                viewModelScope.launch(Dispatchers.Default) {
+                viewModelScope.launch(backgroundOpsDispatcher) {
                     if (_uiState.value !is UiState.Data) {
                         _uiState.value = reduce(_uiState.value, UiResult.Loading)
                         _uiState.value = reduce(_uiState.value, fetchBookSummary())
@@ -87,7 +82,8 @@ open class BookSummaryViewModel @Inject constructor(
 
             is UiIntent.InitPlayer -> {
                 _uiState.value.asData?.let { data ->
-                    setupPlayer(
+                    playerSetupManager.setupPlayer(
+                        audioPlaybackInteractor = audioPlaybackInteractor,
                         context = intent.context,
                         audioItems = getPlayerAudioItems(data),
                         onSuccess = {
@@ -217,23 +213,9 @@ open class BookSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun getPlayerAudioItems(data: UiState.Data): List<MediaItem> =
-        data.summaryParts.mapIndexed { index, summaryPart ->
-            val metadata = MediaMetadata.Builder()
-                .setTitle(resourceProvider.getString(
-                    LocalResources.Strings.KeyPointTitle,
-                    index + 1,
-                    data.partsTotal
-                ))
-                .setDescription(summaryPart.description)
-                .setArtworkUri(Uri.parse(data.bookCoverUrl))
-                .build()
-
-            MediaItem.Builder()
-                .setUri(summaryPart.audioUrl)
-                .setMediaMetadata(metadata)
-                .build()
-        }
+    private fun getPlayerAudioItems(data: UiState.Data): List<MediaItem> {
+        return uiStateMapper.toMediaItems(data)
+    }
 
     private fun reduce(previousState: UiState, result: UiResult): UiState = when (result) {
         UiResult.Loading -> UiState.Loading
@@ -241,16 +223,20 @@ open class BookSummaryViewModel @Inject constructor(
         is UiResult.Success.BookSummaryFetched -> {
             val currentState = previousState.asData
             val currentPartIndex = currentState?.currentPartIndex ?: 0
+
             UiState.Data(
                 summaryParts = result.bookSummary.summaryParts,
                 bookCoverUrl = result.bookSummary.bookCoverUrl,
                 currentPartIndex = currentPartIndex,
                 currentAudioDurationMs = currentState?.currentAudioDurationMs ?: 0,
                 currentAudioPositionMs = currentState?.currentAudioPositionMs ?: 0,
-                audioSpeedLevel = currentState?.audioSpeedLevel ?: UI.BookSummary.AUDIO_SPEED_LEVEL_DEFAULT,
+                audioSpeedLevel = currentState?.audioSpeedLevel
+                    ?: UI.BookSummary.AUDIO_SPEED_LEVEL_DEFAULT,
                 isPlayerReady = currentState?.isPlayerReady ?: false,
-                isAudioPlaying = currentState?.isAudioPlaying ?: UI.BookSummary.AUDIO_PLAYING_DEFAULT,
-                isListeningModeEnabled = currentState?.isListeningModeEnabled ?: UI.BookSummary.LISTENING_ENABLED_DEFAULT
+                isAudioPlaying = currentState?.isAudioPlaying
+                    ?: UI.BookSummary.AUDIO_PLAYING_DEFAULT,
+                isListeningModeEnabled = currentState?.isListeningModeEnabled
+                    ?: UI.BookSummary.LISTENING_ENABLED_DEFAULT
             )
         }
 
@@ -261,6 +247,27 @@ open class BookSummaryViewModel @Inject constructor(
         is UiResult.Success.AudioSpeedChanged -> previousState.asData?.copy(
             audioSpeedLevel = result.audioSpeedLevel
         ) ?: previousState
+
+        is UiResult.Success.SummaryModeToggled -> previousState.asData?.copy(
+            isListeningModeEnabled = result.isListeningModeEnabled
+        ) ?: previousState
+
+        is UiResult.Success.PlaybackStateUpdated -> previousState.asData?.let { data ->
+            val newAudioPositionMs = result.newAudioPositionMs.takeIf {
+                !isAudioPositionChangeInProgress
+            } ?: data.currentAudioPositionMs
+
+            data.copy(
+                isPlayerReady = result.isPlayerReady,
+                isAudioPlaying = result.isAudioPlaying,
+                isListeningModeEnabled = true.takeIf { result.isAudioPlaying }
+                    ?: previousState.asData?.isListeningModeEnabled
+                    ?: false,
+                currentPartIndex = result.newAudioIndex,
+                currentAudioPositionMs = newAudioPositionMs.positive,
+                currentAudioDurationMs = result.newAudioDurationMs.positive
+            )
+        } ?: previousState
 
         is UiResult.Failure -> {
             val onNonCriticalErrorOccurred = { errorMsg: String ->
@@ -293,64 +300,18 @@ open class BookSummaryViewModel @Inject constructor(
                 else -> result.toError(resourceProvider)
             }
         }
-
-        is UiResult.Success.SummaryModeToggled -> previousState.asData?.copy(
-            isListeningModeEnabled = result.isListeningModeEnabled
-        ) ?: previousState
-
-        is UiResult.Success.PlaybackStateUpdated -> previousState.asData?.let { data ->
-            val newAudioPositionMs = result.newAudioPositionMs.takeIf {
-                !isAudioPositionChangeInProgress
-            } ?: data.currentAudioPositionMs
-
-            data.copy(
-                isPlayerReady = result.isPlayerReady,
-                isAudioPlaying = result.isAudioPlaying,
-                isListeningModeEnabled = true.takeIf { result.isAudioPlaying }
-                    ?: previousState.asData?.isListeningModeEnabled
-                    ?: false,
-                currentPartIndex = result.newAudioIndex,
-                currentAudioPositionMs = newAudioPositionMs.positive,
-                currentAudioDurationMs = result.newAudioDurationMs.positive
-            )
-        } ?: previousState
     }
 
     private suspend fun fetchBookSummary(): UiResult {
-        try {
+        return try {
             val bookSummary = getBookSummaryUseCase.execute(bookId = 3)
-            return UiResult.Success.BookSummaryFetched(bookSummary)
-        } catch (e: Throwable) {
-            return UiResult.Failure(ERROR_LOAD_BOOK_DATA, e.message.toString())
-        }
-    }
-
-    private fun setupPlayer(
-        context: Context,
-        audioItems: List<MediaItem>,
-        onSuccess: () -> Unit,
-        onFailure: (Throwable) -> Unit
-    ) {
-        try {
-            if (!isPlayerAvailable) {
-                val sessionToken = SessionToken(context, ComponentName(context, AudioPlaybackService::class.java))
-                val mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-                mediaControllerFuture.addListener(
-                    {
-                        try {
-                            mediaControllerFuture.get()?.let { mediaController ->
-                                audioPlaybackInteractor.configurePlayer(mediaController, audioItems)
-                                onSuccess.invoke()
-                            }
-                        } catch (e: Throwable) {
-                            onFailure.invoke(e)
-                        }
-                    },
-                    MoreExecutors.directExecutor()
-                )
+            if (bookSummary.summaryParts.isNotEmpty()) {
+                UiResult.Success.BookSummaryFetched(bookSummary)
+            } else {
+                UiResult.Failure(ERROR_NO_DATA_FOR_PLAYER)
             }
         } catch (e: Throwable) {
-            onFailure.invoke(e)
+            UiResult.Failure(ERROR_LOAD_BOOK_DATA, e.message.toString())
         }
     }
 
@@ -369,15 +330,17 @@ open class BookSummaryViewModel @Inject constructor(
         get() = this.coerceAtLeast (0)
 
     private fun AudioPlaybackInteractor.interactSafe(
-        onErrorCode: Int,
+        onFailureErrorCode: Int,
         interaction: AudioPlaybackInteractor.() -> Unit
     ) {
         try {
-            this.interaction()
+            if (isPlayerAvailable) {
+                this.interaction()
+            }
         } catch (e: Throwable) {
             _uiState.value = reduce(
                 _uiState.value,
-                UiResult.Failure(onErrorCode)
+                UiResult.Failure(onFailureErrorCode)
             )
         }
     }

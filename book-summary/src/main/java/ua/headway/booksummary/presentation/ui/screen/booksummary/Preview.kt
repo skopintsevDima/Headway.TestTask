@@ -1,15 +1,26 @@
 package ua.headway.booksummary.presentation.ui.screen.booksummary
 
+import android.content.Context
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.media3.common.MediaItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.domain.model.BookSummaryModel
 import ua.headway.booksummary.domain.usecase.GetBookSummaryUseCase
-import ua.headway.booksummary.presentation.interactor.AudioPlaybackInteractorImpl
+import ua.headway.booksummary.presentation.manager.AudioPlaybackInteractorImpl
+import ua.headway.booksummary.presentation.manager.PlayerSetupManager
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mapper.DefaultBookSummaryUiStateMapper
 import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 
 internal class MockBookSummaryViewModelWithState(
-    state: UiState
+    state: UiState,
+    resourceProvider: ResourceProvider = object : ResourceProvider {
+        override fun getString(resId: Int): String = ""
+
+        override fun getString(resId: Int, vararg formatArgs: Any): String = ""
+    }
 ): BookSummaryViewModel(
     getBookSummaryUseCase = object : GetBookSummaryUseCase {
         override suspend fun execute(bookId: Long): BookSummaryModel {
@@ -21,11 +32,20 @@ internal class MockBookSummaryViewModelWithState(
         }
     },
     audioPlaybackInteractor = AudioPlaybackInteractorImpl(),
-    resourceProvider = object : ResourceProvider {
-        override fun getString(resId: Int): String = ""
-
-        override fun getString(resId: Int, vararg formatArgs: Any): String = ""
-    }
+    playerSetupManager = object : PlayerSetupManager {
+        override fun setupPlayer(
+            audioPlaybackInteractor: AudioPlaybackInteractor,
+            context: Context,
+            audioItems: List<MediaItem>,
+            onSuccess: () -> Unit,
+            onFailure: (Throwable) -> Unit
+        ) {
+            // Do nothing
+        }
+    },
+    uiStateMapper = DefaultBookSummaryUiStateMapper(resourceProvider),
+    resourceProvider = resourceProvider,
+    backgroundOpsDispatcher = Dispatchers.Default
 ) {
     override val uiState: StateFlow<UiState> = MutableStateFlow(state)
 }

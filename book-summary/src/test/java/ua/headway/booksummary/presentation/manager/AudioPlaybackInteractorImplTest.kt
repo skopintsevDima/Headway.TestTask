@@ -1,4 +1,4 @@
-package ua.headway.booksummary.presentation.interactor
+package ua.headway.booksummary.presentation.manager
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -32,11 +32,11 @@ class AudioPlaybackInteractorTest {
     private val mockMediaController = mockk<MediaController>(relaxed = true)
     private val mockMediaItem = mockk<MediaItem>(relaxed = true)
     private val testCoroutineScope = TestScope()
-    private val dispatcher = StandardTestDispatcher(testCoroutineScope.testScheduler)
+    private val testDispatcher = StandardTestDispatcher(testCoroutineScope.testScheduler)
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(dispatcher)
+        Dispatchers.setMain(testDispatcher)
         interactor = AudioPlaybackInteractorImpl()
     }
 

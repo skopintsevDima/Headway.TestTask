@@ -1,4 +1,4 @@
-package ua.headway.booksummary.presentation.interactor
+package ua.headway.booksummary.presentation.manager
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
