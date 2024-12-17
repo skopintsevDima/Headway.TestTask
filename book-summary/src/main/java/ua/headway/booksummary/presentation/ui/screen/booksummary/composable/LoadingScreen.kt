@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
+import ua.headway.booksummary.presentation.ui.screen.booksummary.TestTags.TAG_LOADING_SCREEN
 import ua.headway.core.presentation.ui.resources.LocalResources
 
 @Composable
@@ -42,6 +44,7 @@ fun LoadingScreen() {
 private fun LoadingScreenPortrait() {
     Column(
         modifier = Modifier
+            .testTag(TAG_LOADING_SCREEN)
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .padding(LocalResources.Dimensions.Padding.Medium),
@@ -92,6 +95,7 @@ private fun LoadingScreenPortrait() {
 private fun LoadingScreenLandscape() {
     Row(
         modifier = Modifier
+            .testTag(TAG_LOADING_SCREEN)
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .padding(LocalResources.Dimensions.Padding.Medium)

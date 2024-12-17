@@ -33,18 +33,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import ua.headway.booksummary.presentation.ui.composable.RequestPermission
+import ua.headway.booksummary.presentation.ui.screen.booksummary.TestTags.TAG_DATA_SCREEN
+import ua.headway.booksummary.presentation.ui.screen.booksummary.TestTags.TAG_DATA_SCREEN_PLACEHOLDER
+import ua.headway.booksummary.presentation.ui.screen.booksummary.TestTags.TAG_RETRY_BUTTON
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.DataListeningScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.DataReadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.ErrorSnackBar
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.LoadingScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.MessageScreen
 import ua.headway.booksummary.presentation.ui.screen.booksummary.composable.TopBookCover
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mock.DataStatePreviewProvider
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mock.ErrorStatePreviewProvider
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mock.MockBookSummaryViewModelWithState
+import ua.headway.booksummary.presentation.ui.screen.booksummary.mock.MockUiState
 import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary
 import ua.headway.core.presentation.ui.resources.LocalResources
 import ua.headway.core.presentation.ui.theme.HeadwayTestTaskTheme
@@ -67,7 +75,19 @@ fun BookSummaryScreen(viewModel: BookSummaryViewModel = hiltViewModel<BookSummar
                 UiState.Idle -> IdleScreen()
                 UiState.Loading -> LoadingScreen()
                 is UiState.Error -> ErrorScreen(stateValue, viewModel, snackbarHostState)
-                is UiState.Data -> DataScreen(stateValue, viewModel, snackbarHostState)
+                is UiState.Data -> {
+                    if (stateValue.partsTotal > 0) {
+                        DataScreen(stateValue, viewModel, snackbarHostState)
+                    } else {
+                        ErrorScreen(
+                            UiState.Error.LoadBookDataError(
+                                stringResource(LocalResources.Strings.ErrorLoadBookData)
+                            ),
+                            viewModel,
+                            snackbarHostState
+                        )
+                    }
+                }
             }
         }
     }
@@ -133,6 +153,7 @@ private fun ErrorScreen(
 private fun DataScreenPlaceholder(onRetryClick: () -> Unit) {
     Box(
         modifier = Modifier
+            .testTag(TAG_DATA_SCREEN_PLACEHOLDER)
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background),
         contentAlignment = Alignment.Center
@@ -143,7 +164,9 @@ private fun DataScreenPlaceholder(onRetryClick: () -> Unit) {
         ) {
             IconButton(
                 onClick = onRetryClick,
-                modifier = Modifier.size(LocalResources.Dimensions.Icon.ExtraLarge)
+                modifier = Modifier
+                    .testTag(TAG_RETRY_BUTTON)
+                    .size(LocalResources.Dimensions.Icon.ExtraLarge)
             ) {
                 Icon(
                     modifier = Modifier.size(LocalResources.Dimensions.Icon.ExtraLarge),
@@ -204,6 +227,7 @@ private fun DataScreen(
 private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     Column(
         modifier = Modifier
+            .testTag(TAG_DATA_SCREEN)
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .padding(WindowInsets.systemBars.asPaddingValues()),
@@ -238,6 +262,7 @@ private fun DataPortraitScreen(data: UiState.Data, viewModel: BookSummaryViewMod
 private fun DataLandscapeScreen(data: UiState.Data, viewModel: BookSummaryViewModel) {
     Row(
         modifier = Modifier
+            .testTag(TAG_DATA_SCREEN)
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
             .padding(WindowInsets.systemBars.asPaddingValues())
@@ -327,4 +352,12 @@ private fun BookSummaryScreenPreviewWrapper(
             viewModel = MockBookSummaryViewModelWithState(uiState)
         )
     }
+}
+
+object TestTags {
+    const val TAG_MESSAGE_SCREEN = "MessageScreen"
+    const val TAG_LOADING_SCREEN = "LoadingScreen"
+    const val TAG_DATA_SCREEN_PLACEHOLDER = "DataScreenPlaceholder"
+    const val TAG_DATA_SCREEN = "DataScreen"
+    const val TAG_RETRY_BUTTON = "RetryButton"
 }

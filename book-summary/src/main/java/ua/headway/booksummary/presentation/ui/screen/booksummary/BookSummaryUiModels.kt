@@ -25,7 +25,9 @@ sealed class UiState {
         val nonCriticalError: NonCriticalError? = null
     ): UiState() {
         val currentSummaryPart: SummaryPart
-            get() = summaryParts[currentPartIndex]
+            get() = summaryParts.getOrElse(currentPartIndex) {
+                SummaryPart("", "", "")
+            }
         val partsTotal: Int
             get() = summaryParts.size
         val isFirstPartNow: Boolean

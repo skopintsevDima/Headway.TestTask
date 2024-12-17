@@ -1,13 +1,16 @@
-package ua.headway.booksummary.presentation.ui.screen.booksummary
+package ua.headway.booksummary.presentation.ui.screen.booksummary.mock
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ua.headway.booksummary.domain.model.BookSummaryModel
+import ua.headway.booksummary.presentation.ui.screen.booksummary.BookSummaryViewModel
+import ua.headway.booksummary.presentation.ui.screen.booksummary.UiIntent
+import ua.headway.booksummary.presentation.ui.screen.booksummary.UiState
 
 internal class MockBookSummaryViewModelWithState(
     state: UiState,
-): BookSummaryViewModel{
+): BookSummaryViewModel {
     override val uiState: StateFlow<UiState> = MutableStateFlow(state)
 
     override fun tryHandleIntent(intent: UiIntent) {
