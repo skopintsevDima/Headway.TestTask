@@ -305,10 +305,10 @@ open class BookSummaryViewModel @Inject constructor(
     private suspend fun fetchBookSummary(): UiResult {
         return try {
             val bookSummary = getBookSummaryUseCase.execute(bookId = 3)
-            if (bookSummary.summaryParts.isNotEmpty()) {
-                UiResult.Success.BookSummaryFetched(bookSummary)
-            } else {
+            if (bookSummary == null || bookSummary.summaryParts.isEmpty()) {
                 UiResult.Failure(ERROR_NO_DATA_FOR_PLAYER)
+            } else {
+                UiResult.Success.BookSummaryFetched(bookSummary)
             }
         } catch (e: Throwable) {
             UiResult.Failure(ERROR_LOAD_BOOK_DATA, e.message.toString())
