@@ -19,6 +19,7 @@ import ua.headway.booksummary.domain.interactor.AudioPlaybackInteractor
 import ua.headway.booksummary.presentation.ui.screen.booksummary.PlaybackState
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_PLAYBACK
 import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary.ERROR_PLAYER_TEMPORARILY_UNAVAILABLE
+import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_SPEED_LEVEL_DEFAULT
 import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_SPEED_LEVEL_MAXIMUM
 import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.AUDIO_SPEED_LEVEL_MINIMUM
 import ua.headway.booksummary.presentation.util.Constants.UI.BookSummary.DELAY_PLAYER_SYNC_MILLIS
@@ -63,6 +64,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                         currentAudioIndex = audioPlayer?.currentMediaItemIndex ?: playbackState.currentAudioIndex,
                         currentAudioPositionMs = playbackPosition,
                         currentAudioDurationMs = audioPlayer?.duration ?: playbackState.currentAudioDurationMs,
+                        audioSpeedLevel = audioPlayer?.playbackParameters?.speed ?: playbackState.audioSpeedLevel
                     )
                 } else playbackState
             }
@@ -157,7 +159,8 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                         isAudioPlaying = audioPlayer?.isPlaying ?: false,
                         currentAudioIndex = audioPlayer?.currentMediaItemIndex ?: 0,
                         currentAudioPositionMs = audioPlayer?.currentPosition ?: 0,
-                        currentAudioDurationMs = audioPlayer?.duration ?: 0
+                        currentAudioDurationMs = audioPlayer?.duration ?: 0,
+                        audioSpeedLevel = audioPlayer?.playbackParameters?.speed ?: AUDIO_SPEED_LEVEL_DEFAULT
                     )
                     updatePlaybackState(newPlaybackState)
                     startPlayerSyncer()
@@ -171,14 +174,6 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
                 }
             }
             super.onPlaybackStateChanged(state)
-        }
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            val currentPlaybackState = _playbackState.value.asReady
-            if (currentPlaybackState != null && !isBuffering) {
-                updatePlaybackState(newPlaybackState = currentPlaybackState.copy(isAudioPlaying = isPlaying))
-            }
-            super.onIsPlayingChanged(isPlaying)
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {

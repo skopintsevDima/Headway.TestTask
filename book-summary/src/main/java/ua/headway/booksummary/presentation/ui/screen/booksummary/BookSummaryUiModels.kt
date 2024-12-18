@@ -73,14 +73,14 @@ sealed class UiResult {
     sealed class Success: UiResult() {
         data class BookSummaryFetched(val bookSummary: BookSummaryModel): Success()
         data object PlayerInitiated: Success()
-        data class AudioSpeedChanged(val audioSpeedLevel: Float): Success()
         data class SummaryModeToggled(val isListeningModeEnabled: Boolean): Success()
         data class PlaybackStateUpdated(
             val isPlayerReady: Boolean,
             val isAudioPlaying: Boolean,
             val newAudioIndex: Int,
             val newAudioPositionMs: Long,
-            val newAudioDurationMs: Long
+            val newAudioDurationMs: Long,
+            val newAudioSpeedLevel: Float
         ): Success()
     }
 
@@ -113,7 +113,8 @@ sealed class PlaybackState {
         val isAudioPlaying: Boolean,
         val currentAudioIndex: Int,
         val currentAudioPositionMs: Long,
-        val currentAudioDurationMs: Long
+        val currentAudioDurationMs: Long,
+        val audioSpeedLevel: Float
     ): PlaybackState()
 
     data class Error(

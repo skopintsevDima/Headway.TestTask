@@ -145,10 +145,6 @@ class BookSummaryViewModelImpl @Inject constructor(
                 }
                 audioPlaybackInteractor.interactSafe(ERROR_PLAYER_SPEED_CHANGE_FAILED) {
                     changeSpeed(newAudioSpeedLevel)
-                    _uiState.value = reduce(
-                        _uiState.value,
-                        UiResult.Success.AudioSpeedChanged(newAudioSpeedLevel)
-                    )
                 }
             }
 
@@ -187,7 +183,8 @@ class BookSummaryViewModelImpl @Inject constructor(
                                 isAudioPlaying = currentState.isAudioPlaying,
                                 newAudioIndex = currentState.currentPartIndex,
                                 newAudioPositionMs = currentState.currentAudioPositionMs,
-                                newAudioDurationMs = currentState.currentAudioDurationMs
+                                newAudioDurationMs = currentState.currentAudioDurationMs,
+                                newAudioSpeedLevel = currentState.audioSpeedLevel
                             )
                         )
                     }
@@ -199,7 +196,8 @@ class BookSummaryViewModelImpl @Inject constructor(
                                 isAudioPlaying = newPlaybackState.isAudioPlaying,
                                 newAudioIndex = newPlaybackState.currentAudioIndex,
                                 newAudioPositionMs = newPlaybackState.currentAudioPositionMs,
-                                newAudioDurationMs = newPlaybackState.currentAudioDurationMs
+                                newAudioDurationMs = newPlaybackState.currentAudioDurationMs,
+                                newAudioSpeedLevel = newPlaybackState.audioSpeedLevel
                             )
                         )
                     }
@@ -249,10 +247,6 @@ class BookSummaryViewModelImpl @Inject constructor(
             isPlayerReady = true
         ) ?: previousState
 
-        is UiResult.Success.AudioSpeedChanged -> previousState.asData?.copy(
-            audioSpeedLevel = result.audioSpeedLevel
-        ) ?: previousState
-
         is UiResult.Success.SummaryModeToggled -> previousState.asData?.copy(
             isListeningModeEnabled = result.isListeningModeEnabled
         ) ?: previousState
@@ -270,7 +264,8 @@ class BookSummaryViewModelImpl @Inject constructor(
                     ?: false,
                 currentPartIndex = result.newAudioIndex,
                 currentAudioPositionMs = newAudioPositionMs.positive,
-                currentAudioDurationMs = result.newAudioDurationMs.positive
+                currentAudioDurationMs = result.newAudioDurationMs.positive,
+                audioSpeedLevel = result.newAudioSpeedLevel
             )
         } ?: previousState
 
