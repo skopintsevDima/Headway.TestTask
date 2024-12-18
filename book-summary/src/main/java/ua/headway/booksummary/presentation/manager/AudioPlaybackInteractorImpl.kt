@@ -149,7 +149,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     private inner class AudioPlayerListener : Player.Listener {
         override fun onPlaybackStateChanged(state: Int) {
             when (state) {
-                Player.STATE_READY -> {
+                Player.STATE_READY, Player.STATE_ENDED -> {
                     isBuffering = false
                     val currentPlaybackState = _playbackState.value.asReady
                     val newPlaybackState = currentPlaybackState ?: PlaybackState.Ready(
