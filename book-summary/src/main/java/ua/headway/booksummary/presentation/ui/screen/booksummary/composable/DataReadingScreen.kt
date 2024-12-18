@@ -16,6 +16,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,10 @@ fun DataReadingScreen(
     modeTogglePadding: Dp
 ) {
     val scrollState = rememberScrollState()
+    LaunchedEffect(data.currentPartIndex) {
+        scrollState.scrollTo(0)
+    }
+
     val onAudioModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
     val onTextModeClick = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.ToggleSummaryMode) } }
     val onSkipBack = remember(viewModel) { { viewModel.tryHandleIntent(UiIntent.GoPreviousPart) } }
