@@ -81,7 +81,7 @@ fun PartNumberTitle(partNumber: Int, partsTotal: Int) {
 @Composable
 fun PartDescription(currentPartDescription: String) {
     Text(
-        modifier = Modifier.padding(horizontal = LocalResources.Dimensions.Padding.Small),
+        modifier = Modifier.padding(horizontal = LocalResources.Dimensions.Padding.XLarge),
         text = currentPartDescription,
         style = MaterialTheme.typography.body1.copy(
             fontWeight = FontWeight.Normal,

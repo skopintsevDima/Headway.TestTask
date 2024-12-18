@@ -310,7 +310,7 @@ class BookSummaryViewModelImpl @Inject constructor(
 
     private suspend fun fetchBookSummary(): UiResult {
         return try {
-            val bookSummary = getBookSummaryUseCase.execute(bookId = 3)
+            val bookSummary = getBookSummaryUseCase.execute(bookId = 1)
             if (bookSummary == null || bookSummary.summaryParts.isEmpty()) {
                 UiResult.Failure(ERROR_NO_DATA_FOR_PLAYER)
             } else {
