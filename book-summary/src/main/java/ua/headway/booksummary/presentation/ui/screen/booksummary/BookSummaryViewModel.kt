@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -55,7 +54,7 @@ class BookSummaryViewModelImpl @Inject constructor(
     init {
         viewModelScope.launch {
             playbackState = audioPlaybackInteractor.subscribeToUpdates(
-                viewModelScope + Dispatchers.Default
+                viewModelScope + backgroundOpsDispatcher
             )
             playbackState.collectLatest { newPlaybackState ->
                 tryHandleIntent(UiIntent.UpdatePlaybackState(newPlaybackState))
