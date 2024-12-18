@@ -33,7 +33,7 @@ import ua.headway.booksummary.presentation.util.Constants.ErrorCodes.BookSummary
 import ua.headway.core.presentation.ui.resources.provider.ResourceProvider
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class BookSummaryViewModelTest {
+class BookSummaryViewModelImplTest {
     private val mockGetBookSummaryUseCase: GetBookSummaryUseCase = mockk()
     private val mockAudioPlaybackInteractor: AudioPlaybackInteractor = mockk(relaxed = true)
     private val mockPlayerSetupManager: PlayerSetupManager = mockk(relaxed = true)
@@ -54,7 +54,7 @@ class BookSummaryViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = BookSummaryViewModel(
+        viewModel = BookSummaryViewModelImpl(
             getBookSummaryUseCase = mockGetBookSummaryUseCase,
             audioPlaybackInteractor = mockAudioPlaybackInteractor,
             playerSetupManager = mockPlayerSetupManager,
@@ -239,7 +239,7 @@ class BookSummaryViewModelTest {
     }
 
     @Test
-    fun `ToggleAudioSpeed cycles through speed levels and changes state`() = testCoroutineScope.runTest {
+    fun `ToggleAudioSpeed invokes playback interactor with correct speed level`() = testCoroutineScope.runTest {
         coEvery { mockGetBookSummaryUseCase.execute(any()) } returns testBookSummary
         every { mockAudioPlaybackInteractor.isPlayerAvailable } returns true
 
@@ -248,15 +248,6 @@ class BookSummaryViewModelTest {
 
         viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed)
         verify { mockAudioPlaybackInteractor.changeSpeed(1.5f) }
-        assertEquals(1.5f, viewModel.uiState.value.asData?.audioSpeedLevel)
-
-        viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed)
-        verify { mockAudioPlaybackInteractor.changeSpeed(2.0f) }
-        assertEquals(2.0f, viewModel.uiState.value.asData?.audioSpeedLevel)
-
-        viewModel.tryHandleIntent(UiIntent.ToggleAudioSpeed)
-        verify { mockAudioPlaybackInteractor.changeSpeed(1.0f) }
-        assertEquals(1.0f, viewModel.uiState.value.asData?.audioSpeedLevel)
     }
 
     @Test
@@ -442,7 +433,8 @@ class BookSummaryViewModelTest {
             isAudioPlaying = true,
             currentAudioIndex = 2,
             currentAudioPositionMs = 30000L,
-            currentAudioDurationMs = 100500L
+            currentAudioDurationMs = 100500L,
+            audioSpeedLevel = 1.0f
         )
         viewModel.tryHandleIntent(UiIntent.UpdatePlaybackState(newPlaybackState))
 
