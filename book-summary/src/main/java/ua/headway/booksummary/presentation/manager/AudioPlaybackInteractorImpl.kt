@@ -34,6 +34,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     private var coroutineScope: CoroutineScope? = null
 
     private var isBuffering: Boolean = false
+    private var shouldSkipNextPositionSync: Boolean = false
 
     override val isPlayerAvailable: Boolean
         get() = audioPlayer != null
@@ -96,6 +97,7 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
             it in AUDIO_SPEED_LEVEL_MINIMUM..AUDIO_SPEED_LEVEL_MAXIMUM
         }?.let { newSpeedLevel ->
             audioPlayer?.setPlaybackSpeed(newSpeedLevel)
+            shouldSkipNextPositionSync = true
         }
     }
 
@@ -133,9 +135,17 @@ class AudioPlaybackInteractorImpl : AudioPlaybackInteractor {
     }
 
     private fun syncPlayer() {
-        audioPlayer?.run {
-            val newAudioPositionMs = this.currentPosition
-            coroutineScope?.launch { _playbackPositionState.emit(newAudioPositionMs) }
+        coroutineScope?.launch {
+            if (shouldSkipNextPositionSync) {
+                delay(DELAY_PLAYER_SYNC_MILLIS)
+                shouldSkipNextPositionSync = false
+            }
+
+            withContext(Dispatchers.Main) {
+                audioPlayer?.currentPosition?.let { newAudioPositionMs ->
+                    _playbackPositionState.emit(newAudioPositionMs)
+                }
+            }
         }
     }
 
